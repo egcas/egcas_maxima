@@ -10,9 +10,10 @@ include(ExternalProject)
 
 ExternalProject_Add(egcas_maxima
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/maxima
-    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/maxima/configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/inst
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/inst
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/maxima/configure --datarootdir=${CMAKE_BINARY_DIR}/maxima_installation/usr/share/egcas/ --prefix=${CMAKE_BINARY_DIR}/maxima_installation/ --program-prefix=egcas- --libexecdir=${CMAKE_BINARY_DIR}/maxima_installation/usr/bin/egcas/ --libdir=${CMAKE_BINARY_DIR}/maxima_installation/usr/lib/egcas/ --bindir=${CMAKE_BINARY_DIR}/maxima_installation/usr/bin/egcas/
+    PREFIX ${CMAKE_BINARY_DIR}/maxima_installation
     BUILD_COMMAND make
-    #BUILD_IN_SOURCE 1
-    )
+    BUILD_IN_SOURCE 1
+)
 
+    
