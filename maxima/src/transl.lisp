@@ -927,9 +927,6 @@ APPLY means like APPLY.")
   (setq tr-abort t)
   '($any . nil))
 
-(def%tr mdefine (form) ;; ((MDEFINE) ((F) ...) ...)
-  `($any . (meval ',form)))
-
 (def%tr mdefmacro (form)
   (meval form) ;; HMM, THIS HAS A SIDE EFFECT AT THE TIME OF TRANSLATION !!
   `($any . (meval ',form)))
@@ -972,7 +969,7 @@ APPLY means like APPLY.")
 	      (let* ((var (car l))
 		     (assign (get var 'assign)))
 		(if assign
-		    (cond ((member assign '(assign-mode-check) :test #'eq)
+		    (cond ((eq assign 'assign-mode-check)
 			   (push `(,assign ',var ,(teval var)) easy-assigns))
 			  (t
 			   (return nil)))))))

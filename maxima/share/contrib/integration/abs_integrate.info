@@ -162,7 +162,7 @@ File: abs_integrate.info,  Node: Definitions for abs_integrate,  Next: Function 
 
      To use 'load(abs_integrate)'
 
- -- Function: intfudu(<e>, <x>)
+ -- Function: intfudu (<e>, <x>)
 
      This function uses the derivative divides rule for integrands of
      the form f(w(x)) * diff(w(x),x) When 'infudu' is unable to find an
@@ -308,7 +308,7 @@ Appendix A Function and variable index
                                                               (line 167)
 * convert_to_signum:                     Definitions for abs_integrate.
                                                               (line 190)
-* intfudu(<e>,:                          Definitions for abs_integrate.
+* intfudu:                               Definitions for abs_integrate.
                                                               (line  76)
 * intfugudu:                             Definitions for abs_integrate.
                                                               (line 127)
@@ -329,6 +329,6 @@ Tag Table:
 Node: Top87
 Node: Introduction to abs_integrate363
 Node: Definitions for abs_integrate3483
-Node: Function and variable index11468
+Node: Function and variable index11469
 
 End Tag Table

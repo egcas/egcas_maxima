@@ -5,7 +5,7 @@
 (defparameter *autoconf-prefix* "/usr/local")
 (defparameter *autoconf-exec_prefix* "/usr/local")
 (defparameter *autoconf-package* "maxima")
-(defparameter *autoconf-version* "5.39.0")
+(defparameter *autoconf-version* "5.40.0")
 (defparameter *autoconf-libdir* "/usr/local/lib")
 (defparameter *autoconf-libexecdir* "/usr/local/libexec")
 (defparameter *autoconf-datadir* "/usr/local/share")

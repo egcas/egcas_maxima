@@ -12,7 +12,7 @@ END-INFO-DIR-ENTRY
 
 File: maxima.info,  Node: Top,  Next: Introduction to Maxima,  Prev: (dir),  Up: (dir)
 
-Maxima 5.39.0 Manual
+Maxima 5.40.0 Manual
 ********************
 
 Maxima is a computer algebra system, implemented in Lisp.
@@ -2762,6 +2762,8 @@ File: maxima.info,  Node: Functions and Variables for Strings,  Prev: Introducti
      'concat' evaluates its arguments.  The single quote ''' prevents
      evaluation.
 
+     See also 'sconcat' and 'eval_string'.
+
           (%i1) y: 7$
           (%i2) z: 88$
           (%i3) concat (y, z/2);
@@ -2796,6 +2798,8 @@ File: maxima.info,  Node: Functions and Variables for Strings,  Prev: Introducti
 
      Concatenates its arguments into a string.  Unlike 'concat', the
      arguments do not need to be atoms.
+
+     See also 'concat' and 'eval_string'.
 
           (%i1) sconcat ("xx[", 3, "]:", expand ((x+y)^3));
           (%o1)               xx[3]:y^3+3*x*y^2+3*x^2*y+x^3
@@ -3679,9 +3683,9 @@ File: maxima.info,  Node: Functions and Variables for Lists,  Next: Performance 
  -- Function: pop (<list>)
 
      'pop' removes and returns the first element from the list <list>.
-     The second argument <list> must be a mapatom that is bound to a
-     nonempty list.  If the argument <list> is not bound to a nonempty
-     list, Maxima signals an error.  For examples, see 'push'.
+     The argument <list> must be a mapatom that is bound to a nonempty
+     list.  If the argument <list> is not bound to a nonempty list,
+     Maxima signals an error.  For examples, see 'push'.
 
  -- Function: push (<item>, <list>)
 
@@ -4071,7 +4075,7 @@ File: maxima.info,  Node: Functions and Variables for Lists,  Next: Performance 
           (%i2) F ([L]) := L;
           (%o2)                      F([L]) := L
           (%i3) xreduce (F, [a, b, c, d, e]);
-          (%o3)         [[[[[("[", simp), a], b], c], d], e]
+          (%o3)                    [a, b, c, d, e]
 
      'xreduce' applied to a function not known to be n-ary.  'G' is
      called several times, with two arguments each time.
@@ -4079,7 +4083,7 @@ File: maxima.info,  Node: Functions and Variables for Lists,  Next: Performance 
           (%i1) G ([L]) := L;
           (%o1)                      G([L]) := L
           (%i2) xreduce (G, [a, b, c, d, e]);
-          (%o2)         [[[[[("[", simp), a], b], c], d], e]
+          (%o2)                 [[[[a, b], c], d], e]
           (%i3) lreduce (G, [a, b, c, d, e]);
           (%o3)                 [[[[a, b], c], d], e]
 
@@ -5093,10 +5097,12 @@ File: maxima.info,  Node: Functions and Variables for Expressions,  Prev: Inequa
 
      'box' evaluates its argument.  However, a boxed expression does not
      evaluate to its content, so boxed expressions are effectively
-     excluded from computations.
+     excluded from computations.  'rembox' removes the box again.
 
      'boxchar' is the character used to draw the box in 'box' and in the
      'dpart' and 'lpart' functions.
+
+     See also 'rembox', 'dpart' and 'lpart'.
 
      Examples:
 
@@ -5161,20 +5167,20 @@ File: maxima.info,  Node: Functions and Variables for Expressions,  Prev: Inequa
           (%i2) mm : m$
           (%i3) mm[2][1] : x$
           (%i4) m;
-          (%o4)                      [1,[x,3]]
+          (%o4)                      [1, [x, 3]]
           (%i5) mm;
-          (%o5)                      [1,[x,3]]
+          (%o5)                      [1, [x, 3]]
 
      Let's try the same experiment, but this time let <mm> be a copy of
      <m>
 
-          (%i6) m : [1,[2,3]]$
-          (%i7) mm : copy(m)$
-          (%i8) mm[2][1] : x$
-          (%i9) m;
-          (%o9)                     [1,[2,3]]
-          (%i10) mm;
-          (%o10)                    [1,[x,3]]
+          (%i1) m : [1,[2,3]]$
+          (%i2) mm : copy(m)$
+          (%i3) mm[2][1] : x$
+          (%i4) m;
+          (%o4)                      [1, [2, 3]]
+          (%i5) mm;
+          (%o5)                      [1, [x, 3]]
 
      This time, the assignment to <mm> does not change the value of <m>.
 
@@ -6143,6 +6149,8 @@ File: maxima.info,  Node: Functions and Variables for Expressions,  Prev: Inequa
      into the operator of an expression.  E.g.  '(opsubst: false, subst
      (x^2, r, r+r[0]))' will work.
 
+     See also 'at', 'ev' and 'psubst'.
+
      Examples:
 
           (%i1) subst (a, x+y, x + (x+y)^2 + y);
@@ -6165,6 +6173,22 @@ File: maxima.info,  Node: Functions and Variables for Expressions,  Prev: Inequa
 
           (%i3) subst(["+"="-"],a+b-c);
           (%o3)                                 c-b+a
+
+     The difference between 'subst' and 'at' can be seen in the
+     following example:
+          (%i1) g1:y(t)=a*x(t)+b*diff(x(t),t);
+                                      d
+          (%o1)             y(t) = b (-- (x(t))) + a x(t)
+                                      dt
+          (%i2) subst('diff(x(t),t)=1,g1);
+          (%o2)                   y(t) = a x(t) + b
+          (%i3) at(g1,'diff(x(t),t)=1);
+                                        !
+                               d        !
+          (%o3)      y(t) = b (-- (x(t))!             ) + a x(t)
+                               dt       !d
+                                        !-- (x(t)) = 1
+                                         dt
 
      For further examples, do 'example (subst)'.
 
@@ -7681,7 +7705,7 @@ File: maxima.info,  Node: Functions and Variables for Evaluation,  Prev: Evaluat
 
      Quote-quote is recognized by 'batch' and 'load'.
 
-     See also the single-quote operator ''' and 'nouns'.
+     See also 'ev', the single-quote operator ''' and 'nouns'.
 
      Examples:
 
@@ -7914,6 +7938,8 @@ File: maxima.info,  Node: Functions and Variables for Evaluation,  Prev: Evaluat
 
        5. For each instance of 'eval' in the arguments, steps (3) and
           (4) are repeated.
+
+     See also '''', 'at' and 'subst'.
 
      Examples:
 
@@ -8157,12 +8183,190 @@ File: maxima.info,  Node: Simplification,  Next: Mathematical Functions,  Prev: 
 
 * Menu:
 
+* Introduction to Simplification::
 * Functions and Variables for Simplification::  
 
 
-File: maxima.info,  Node: Functions and Variables for Simplification,  Prev: Simplification,  Up: Simplification
+File: maxima.info,  Node: Introduction to Simplification,  Next: Functions and Variables for Simplification,  Up: Simplification
 
-9.1 Functions and Variables for Simplification
+9.1 Introduction to Simplification
+==================================
+
+Maxima performs a cycle of actions in response to each new user-typed
+command.  This consists of four steps: reading or "parsing" the input,
+evaluation, simplification and output.  Parsing converts a syntactically
+valid sequence of typed characters into a data structure to be used for
+the rest of the operations.  Evaluation includes replacing names with
+their assigned values.  Simplification means rewriting an expression to
+be easier for the user or other programs to understand.  Output includes
+displaying computational results in a variety of different formats and
+notations.
+
+   Evaluation and simplification sometimes appear to have similar
+functionality as they both have the goal of removing "complexity" and
+system designers have sometimes divided a task so that it is performed
+partly in each.  For example, 'integrate(x,x)' evaluates the answer as
+'x*x/2', which is then simplified to 'x^2/2'.
+
+   Evaluation is always present: it is the consequence of having a
+programming system with functions, subroutines, variables, values,
+loops, assignments and so on.  In the evaluation step, built-in or
+user-defined function names are replaced by their definitions, variables
+are replaced by their values.  This is largely the same as activities of
+a conventional programming language, but extended to work with symbolic
+mathematical data.  Because of the generality of the mathematics at
+hand, there are different possible models of evaluation and so the
+systems has optional "flags" that can steer the process of evaluation.
+*Note Functions and Variables for Evaluation::.
+
+   By contrast, the intent of simplification is to maintain the value of
+an expression while re-formulating its representation to be smaller,
+simpler to understand, or to conform to particular specifications (like
+factored, expanded).  For example, 'sin(0)' to '0' or 'x+x to 2*x'.
+There are several powerful tools to alter the results of simplification,
+since it is largely in this part of the system that a user can
+incorporate knowledge of newly introduced functions or symbolic notation
+into Maxima.
+
+   Simplification is generally done at four different levels:
+   * The internal, built-in automated simplifier,
+   * Built-in simplification routines that can be explicitly called by
+     the user at selected places in a program or command sequence,
+   * User-written simplification routines, linked to the simplifier by
+     using "tellsimp" or "tellsimpafter" and called automatically,
+   * User-written routines that can be explicitly called by the user at
+     selected places in a program or command sequence.
+   The internal simplifier belongs to the heart of Maxima.  It is a
+large and complicated collection of programs, and it has been refined
+over many years and by thousands of users.  Nevertheless, especially if
+you are trying out novel ideas or unconventional notation, you may find
+it helpful to make small (or large) changes to the program yourself.
+For details see for example the paper at the end of
+<https://people.eecs.berkeley.edu/~fateman/papers/intro5.txt>.
+
+   Maxima internally represents expressions as "trees" with operators or
+"roots" like '+', '*' , '=' and operands ("leaves") which are variables
+like <x>, <y>, <z>, functions or sub-trees, like 'x*y'.  Each operator
+has a simplification program associated with it.  '+' (which also covers
+binary '-' since 'a-b = a+(-1)*b)' and '*' (which also covers '/' since
+'a/b = a*b^(-1)') have rather elaborate simplification programs.  These
+simplification programs (simplus, simptimes, simpexpt, etc.)  are called
+whenever the simplifier encounters the respective arithmetic operators
+in an expression tree to be analyzed.
+
+   The structure of the simplifier dates back to 1965, and many hands
+have worked on it through the years.  The structure turns out to be, in
+modern jargon, data- directed, or object-oriented.  The program
+dispatches to the appropriate routine depending on the root of some
+sub-tree of the expression, recursively.  This general notion means you
+can make modifications to the simplification process by very local
+changes to the program.  In many cases it is conceptually
+straightforward to add an operator and add its simplification routine
+without disturbing existing code.
+
+   We note that in addition to this general simplifier operating on
+algebraic expression trees, there are several other representations of
+expressions in Maxima which have separate methods and simplifiers.  For
+example, the 'rat()' function converts polynomials to vectors of
+coefficients to assist in rapid manipulation of such forms.  Other
+representations include Taylor series and the (rarely used) Poisson
+series.
+
+   All operators introduced by the user initially have no simplification
+programs associated with them.  Maxima does not know anything about
+function "f" and so typing 'f(a,b)' will result in simplifying <a>,<b>,
+but not 'f'.  Even some built-in operators have no simplifications.  For
+example, '=' does not "simplify" - it is a place-holder with no
+simplification semantics other than to simplify its two arguments, in
+this case referred to as the left and right sides.  Other parts of
+Maxima such as the solve program take special note of equations, that
+is, trees with '=' as the root.  (Note - in Maxima, the assignment
+operation is ':' .  That is, 'q: 4' sets the value of the symbol <q> to
+'4'.  Function definition is done with ':='.  )
+
+   The general simplifier returns results with an internal flag
+indicating the expression and each sub-expression has been simplified.
+This does not guarantee that it is unique over all possible equivalent
+expressions.  That's too hard (theoretically, not possible given the
+generality of what can be expressed in Maxima).  However, some aspects
+of the expression, such as the ordering of terms in a sum or product,
+are made uniform.  This is important for the other programs to work
+properly.
+
+   You can set a number of option variables which direct Maxima's
+processing to favor particular kinds of patterns as being goals.  You
+can even use the most extreme option which is to turn the simplifier off
+by simp:false.  We do not recommend this since many internal routines
+expect their arguments to be simplified.  (About the only time it seems
+plausible to turn off the simplifier is in the rare case that you want
+to over-ride a built-in simplification.  In that case you might
+temporarily disable the simplifier, put in the new transformation via
+'tellsimp', and then re-enable the simplifier by 'simp:true'.)
+
+   It is more plausible for you to associate user-defined symbolic
+function names or operators with properties ('additive', 'lassociative',
+'oddfun', 'antisymmetric', 'linear', 'outative', 'commutative',
+'multiplicative', 'rassociative', 'evenfun', 'nary' and 'symmetric').
+These options steer the simplifier processing in systematic directions.
+
+   For example, 'declare(f,oddfun)' specifies that 'f' is an odd
+function.  Maxima will simplify 'f(-x)' to '-f(x)'.  In the case of an
+even function, that is 'declare(g,evenfun)', Maxima will simplify
+'g(-x)' to 'g(x)'.  You can also associate a programming function with a
+name such as 'h(x):=x^2+1'.  In that case the evaluator will immediately
+replace 'h(3)' by '10', and 'h(a+1)' by '(a+1)^2+1', so any properties
+of 'h' will be ignored.
+
+   In addition to these directly related properties set up by the user,
+facts and properties from the actual context may have an impact on the
+simplifier's behavior, too.  *Note Introduction to Maximas Database::.
+
+   Example: 'sin(n*%pi)' is simplified to zero, if <n> is an integer.
+
+     (%i1) sin(n*%pi);
+     (%o1)                      sin(%pi n)
+     (%i2) declare(n, integer);
+     (%o2)                         done
+     (%i3) sin(n*%pi);
+     (%o3)                           0
+
+   If automated simplification is not sufficient, you can consider a
+variety of built-in, but explicitly called simplfication functions
+('ratsimp', 'expand', 'factor', 'radcan' and others).  There are also
+flags that will push simplification into one or another direction.
+Given 'demoivre:true' the simplifier rewrites complex exponentials as
+trigonometric forms.  Given 'exponentialize:true' the simplifier tries
+to do the reverse: rewrite trigonometric forms as complex exponentials.
+
+   As everywhere in Maxima, by writing your own functions (be it in the
+Maxima user language or in the implementation language Lisp) and
+explicitly calling them at selected places in the program, you can
+respond to your individual simplification needs.  Lisp gives you a
+handle on all the internal mechanisms, but you rarely need this full
+generality.  "Tellsimp" is designed to generate much of the Lisp
+internal interface into the simplifier automatically.  See *Note Rules
+and Patterns::.
+
+   Over the years (Maxima/Macsyma's origins date back to about 1966!)
+users have contributed numerous application packages and tools to extend
+or alter its functional behavior.  Various non-standard and "share"
+packages exist to modify or extend simplification as well.  You are
+invited to look into this more experimental material where work is still
+in progress.  *Note simplification-pkg::.
+
+   The following appended material is optional on a first reading, and
+reading it is not necessary for productive use of Maxima.  It is for the
+curious user who wants to understand what is going on, or the ambitious
+programmer who might wish to change the (open-source) code.
+Experimentation with redefining Maxima Lisp code is easily possible: to
+change the definition of a Lisp program (say the one that simplifies
+'cos()', named 'simp%cos'), you simply load into Maxima a text file that
+will overwrite the 'simp%cos' function from the maxima package.
+
+
+File: maxima.info,  Node: Functions and Variables for Simplification,  Prev: Introduction to Simplification,  Up: Simplification
+
+9.2 Functions and Variables for Simplification
 ==============================================
 
  -- Property: additive
@@ -9962,6 +10166,75 @@ File: maxima.info,  Node: Root Exponential and Logarithmic Functions,  Next: Tri
      also simplify to 'log(a)-log(b)' for rational numbers 'a/b', 'a#1'.
      ('log(1/b)', for integer 'b', always simplifies.)  If it is set to
      'false', all of these simplifications will be turned off.
+
+     When 'logexpand' is set to 'all' or 'super', the logarithm of a
+     product expression simplifies to a summation of logarithms.
+
+     Examples:
+
+     When 'logexpand' is 'true', 'log(a^b)' simplifies to 'b*log(a)'.
+
+          (%i1) log(n^2), logexpand=true;
+          (%o1)                       2 log(n)
+
+     When 'logexpand' is 'all', 'log(a*b)' simplifies to
+     'log(a)+log(b)'.
+
+          (%i1) log(10*x), logexpand=all;
+          (%o1)                   log(x) + log(10)
+
+     When 'logexpand' is 'super', 'log(a/b)' simplifies to
+     'log(a)-log(b)' for rational numbers 'a/b' with 'a#1'.
+
+          (%i1) log(a/(n + 1)), logexpand=super;
+          (%o1)                  log(a) - log(n + 1)
+
+     When 'logexpand' is set to 'all' or 'super', the logarithm of a
+     product expression simplifies to a summation of logarithms.
+
+          (%i1) my_product : product (X(i), i, 1, n);
+                                       n
+                                     /===\
+                                      ! !
+          (%o1)                       ! !  X(i)
+                                      ! !
+                                     i = 1
+          (%i2) log(my_product), logexpand=all;
+                                    n
+                                   ====
+                                   \
+          (%o2)                     >    log(X(i))
+                                   /
+                                   ====
+                                   i = 1
+          (%i3) log(my_product), logexpand=super;
+                                    n
+                                   ====
+                                   \
+          (%o3)                     >    log(X(i))
+                                   /
+                                   ====
+                                   i = 1
+
+     When 'logexpand' is 'false', these simplifications are disabled.
+
+          (%i1) logexpand : false $
+          (%i2) log(n^2);
+                                            2
+          (%o2)                        log(n )
+          (%i3) log(10*x);
+          (%o3)                       log(10 x)
+          (%i4) log(a/(n + 1));
+                                           a
+          (%o4)                      log(-----)
+                                         n + 1
+          (%i5) log ('product (X(i), i, 1, n));
+                                         n
+                                       /===\
+                                        ! !
+          (%o5)                    log( ! !  X(i))
+                                        ! !
+                                       i = 1
 
  -- Option variable: lognegint
      Default value: 'false'
@@ -11952,10 +12225,9 @@ File: maxima.info,  Node: Functions and Variables for Plotting,  Next: Plotting 
 
      This variable stores the name of the command used to run the
      gnuplot program when the plot format is 'gnuplot'.  Its default
-     value is "wgnuplot" in Windows and "gnuplot" in other systems.  If
-     the gnuplot program is not found unless you give its complete path
-     or if you want to try a different version of it, you may change the
-     value of this variable.  For instance,
+     value is "gnuplot".  If the gnuplot program is not found unless you
+     give its complete path or if you want to try a different version of
+     it, you may change the value of this variable.  For instance,
 
           (%i1) gnuplot_command: "/usr/local/bin/my_gnuplot"$
 
@@ -17002,7 +17274,7 @@ File: maxima.info,  Node: Functions and Variables for Special Functions,  Prev: 
 
      Examples:
 
-          (%i1) load (hypergeometric) $
+          (%i1) load ("hypergeometric") $
           (%i2) foo : [hypergeometric([1,1], [2], z), hypergeometric([1/2], [1], z)];
           (%o2) [hypergeometric([1, 1], [2], z),
                                                                1
@@ -17580,11 +17852,37 @@ File: maxima.info,  Node: Functions and Variables for Differentiation,  Prev: Di
           (%o4)  8 f(x, y) (-- (f(x, y))) - 2 u(x, y) (-- (u(x, y)))
                             dx                         dx
           (%i5) at (%, [x = 0, y = 1]);
-                                                   !
-                        2              d           !
-          (%o5)     16 a  - 2 u(0, 1) (-- (u(x, y))!            )
-                                       dx          !
-                                                   !x = 0, y = 1
+                                                      !
+                           2              d           !
+          (%o5)        16 a  - 2 u(0, 1) (-- (u(x, 1))!     )
+                                          dx          !
+                                                      !x = 0
+
+     Note that in the last line 'y' is treated differently to 'x' as 'y'
+     isn't used as a differentiation variable.
+
+     The difference between 'subst', 'at' and 'ev' can be seen in the
+     following example:
+
+          (%i1) e1:I(t)=C*diff(U(t),t)$
+          (%i2) e2:U(t)=L*diff(I(t),t)$
+          (%i3) at(e1,e2);
+                                         !
+                                d        !
+          (%o3)       I(t) = C (-- (U(t))!                    )
+                                dt       !          d
+                                         !U(t) = L (-- (I(t)))
+                                                    dt
+          (%i4) subst(e2,e1);
+                                      d      d
+          (%o4)             I(t) = C (-- (L (-- (I(t)))))
+                                      dt     dt
+          (%i5) ev(e1,e2,diff);
+                                            2
+                                           d
+          (%o5)                I(t) = C L (--- (I(t)))
+                                             2
+                                           dt
 
  -- Property: atomgrad
 
@@ -17620,6 +17918,8 @@ File: maxima.info,  Node: Functions and Variables for Differentiation,  Prev: Di
      'atvalue' evaluates its arguments.  'atvalue' returns <c>, the
      atvalue.
 
+     See also 'at'.
+
      Examples:
 
           (%i1) atvalue (f(x,y), [x = 0, y = 1], a^2);
@@ -17643,11 +17943,11 @@ File: maxima.info,  Node: Functions and Variables for Differentiation,  Prev: Di
           (%o4)  8 f(x, y) (-- (f(x, y))) - 2 u(x, y) (-- (u(x, y)))
                             dx                         dx
           (%i5) at (%, [x = 0, y = 1]);
-                                                   !
-                        2              d           !
-          (%o5)     16 a  - 2 u(0, 1) (-- (u(x, y))!            )
-                                       dx          !
-                                                   !x = 0, y = 1
+                                                      !
+                           2              d           !
+          (%o5)        16 a  - 2 u(0, 1) (-- (u(x, 1))!     )
+                                          dx          !
+                                                      !x = 0
 
  -- Function: cartan
 
@@ -18218,9 +18518,9 @@ File: maxima.info,  Node: Functions and Variables for Integration,  Next: Introd
  -- Function: dblint (<f>, <r>, <s>, <a>, <b>)
 
      A double-integral routine which was written in top-level Maxima and
-     then translated and compiled to machine code.  Use 'load (dblint)'
-     to access this package.  It uses the Simpson's rule method in both
-     the x and y directions to calculate
+     then translated and compiled to machine code.  Use 'load
+     ("dblint")' to access this package.  It uses the Simpson's rule
+     method in both the x and y directions to calculate
 
           /b /s(x)
           |  |
@@ -20768,7 +21068,7 @@ File: maxima.info,  Node: Functions and Variables for fast Fourier transform,  N
 
      Real data.
 
-          (%i1) load (fft) $
+          (%i1) load ("fft") $
           (%i2) fpprintprec : 4 $
           (%i3) L : [1, 2, 3, 4, -1, -2, -3, -4] $
           (%i4) L1 : inverse_fft (L);
@@ -20783,7 +21083,7 @@ File: maxima.info,  Node: Functions and Variables for fast Fourier transform,  N
 
      Complex data.
 
-          (%i1) load (fft) $
+          (%i1) load ("fft") $
           (%i2) fpprintprec : 4 $
           (%i3) L : [1, 1 + %i, 1 - %i, -1, -1, 1 - %i, 1 + %i, 1] $
           (%i4) L1 : inverse_fft (L);
@@ -20854,7 +21154,7 @@ File: maxima.info,  Node: Functions and Variables for fast Fourier transform,  N
 
      Real data.
 
-          (%i1) load (fft) $
+          (%i1) load ("fft") $
           (%i2) fpprintprec : 4 $
           (%i3) L : [1, 2, 3, 4, -1, -2, -3, -4] $
           (%i4) L1 : fft (L);
@@ -20869,7 +21169,7 @@ File: maxima.info,  Node: Functions and Variables for fast Fourier transform,  N
 
      Complex data.
 
-          (%i1) load (fft) $
+          (%i1) load ("fft") $
           (%i2) fpprintprec : 4 $
           (%i3) L : [1, 1 + %i, 1 - %i, -1, -1, 1 - %i, 1 + %i, 1] $
           (%i4) L1 : fft (L);
@@ -20885,7 +21185,7 @@ File: maxima.info,  Node: Functions and Variables for fast Fourier transform,  N
 
      Computation of sine and cosine coefficients.
 
-          (%i1) load (fft) $
+          (%i1) load ("fft") $
           (%i2) fpprintprec : 4 $
           (%i3) L : [1, 2, 3, 4, 5, 6, 7, 8] $
           (%i4) n : length (L) $
@@ -21099,7 +21399,7 @@ File: maxima.info,  Node: Functions for numerical solution of equations,  Next: 
 
      Examples:
 
-          (%i1) load (newton1);
+          (%i1) load ("newton1");
           (%o1)  /maxima/share/numeric/newton1.mac
           (%i2) newton (cos (u), u, 1, 1/100);
           (%o2)                   1.570675277161251
@@ -21281,6 +21581,10 @@ File: maxima.info,  Node: Functions for numerical solution of differential equat
 
         * "yaxislabel" will be used to identify the vertical axis.  Its
           default value is the name of the second state variable.
+
+        * "number_of_arrows" should be set to a square number and
+          defines the approximate density of the arrows being drawn.
+          The default value is 225.
 
      *Examples:*
 
@@ -22174,7 +22478,7 @@ File: maxima.info,  Node: Functions and Variables for Matrices and Linear Algebr
 
      Gram-Schmidt algorithm using default inner product function.
 
-          (%i1) load (eigen)$
+          (%i1) load ("eigen")$
           (%i2) x: matrix ([1, 2, 3], [9, 18, 30], [12, 48, 60]);
                                    [ 1   2   3  ]
                                    [            ]
@@ -22191,7 +22495,7 @@ File: maxima.info,  Node: Functions and Variables for Matrices and Linear Algebr
 
      Gram-Schmidt algorithm using a specified inner product function.
 
-          (%i1) load (eigen)$
+          (%i1) load ("eigen")$
           (%i2) ip (f, g) := integrate (f * g, u, a, b);
           (%o2)          ip(f, g) := integrate(f g, u, a, b)
           (%i3) y : gramschmidt([1, sin(u), cos(u)], ip), a= -%pi/2, b=%pi/2;
@@ -24888,1445 +25192,4 @@ and should not be redefined:
        _lc2kdt0
        _lcprod
        _extlc
-
-
-File: maxima.info,  Node: ctensor,  Next: atensor,  Prev: itensor,  Up: Top
-
-26 ctensor
-**********
-
-* Menu:
-
-* Introduction to ctensor::
-* Functions and Variables for ctensor::
-
-
-File: maxima.info,  Node: Introduction to ctensor,  Next: Functions and Variables for ctensor,  Prev: ctensor,  Up: ctensor
-
-26.1 Introduction to ctensor
-============================
-
-'ctensor' is a component tensor manipulation package.  To use the
-'ctensor' package, type 'load(ctensor)'.  To begin an interactive
-session with 'ctensor', type 'csetup()'.  You are first asked to specify
-the dimension of the manifold.  If the dimension is 2, 3 or 4 then the
-list of coordinates defaults to '[x,y]', '[x,y,z]' or '[x,y,z,t]'
-respectively.  These names may be changed by assigning a new list of
-coordinates to the variable 'ct_coords' (described below) and the user
-is queried about this.  Care must be taken to avoid the coordinate names
-conflicting with other object definitions.
-
-   Next, the user enters the metric either directly or from a file by
-specifying its ordinal position.  The metric is stored in the matrix
-'lg'.  Finally, the metric inverse is computed and stored in the matrix
-'ug'.  One has the option of carrying out all calculations in a power
-series.
-
-   A sample protocol is begun below for the static, spherically
-symmetric metric (standard coordinates) which will be applied to the
-problem of deriving Einstein's vacuum equations (which lead to the
-Schwarzschild solution) as an example.  Many of the functions in
-'ctensor' will be displayed for the standard metric as examples.
-
-     (%i1) load(ctensor);
-     (%o1)      /share/tensor/ctensor.mac
-     (%i2) csetup();
-     Enter the dimension of the coordinate system:
-     4;
-     Do you wish to change the coordinate names?
-     n;
-     Do you want to
-     1. Enter a new metric?
-
-     2. Enter a metric from a file?
-
-     3. Approximate a metric with a Taylor series?
-     1;
-
-     Is the matrix  1. Diagonal  2. Symmetric  3. Antisymmetric  4. General
-     Answer 1, 2, 3 or 4
-     1;
-     Row 1 Column 1:
-     a;
-     Row 2 Column 2:
-     x^2;
-     Row 3 Column 3:
-     x^2*sin(y)^2;
-     Row 4 Column 4:
-     -d;
-
-     Matrix entered.
-     Enter functional dependencies with the DEPENDS function or 'N' if none
-     depends([a,d],x);
-     Do you wish to see the metric?
-     y;
-                               [ a  0       0        0  ]
-                               [                        ]
-                               [     2                  ]
-                               [ 0  x       0        0  ]
-                               [                        ]
-                               [         2    2         ]
-                               [ 0  0   x  sin (y)   0  ]
-                               [                        ]
-                               [ 0  0       0       - d ]
-     (%o2)                                done
-     (%i3) christof(mcs);
-                                                 a
-                                                  x
-     (%t3)                          mcs        = ---
-                                       1, 1, 1   2 a
-
-                                                  1
-     (%t4)                           mcs        = -
-                                        1, 2, 2   x
-
-                                                  1
-     (%t5)                           mcs        = -
-                                        1, 3, 3   x
-
-                                                 d
-                                                  x
-     (%t6)                          mcs        = ---
-                                       1, 4, 4   2 d
-
-                                                   x
-     (%t7)                          mcs        = - -
-                                       2, 2, 1     a
-
-                                                cos(y)
-     (%t8)                         mcs        = ------
-                                      2, 3, 3   sin(y)
-
-                                                    2
-                                               x sin (y)
-     (%t9)                      mcs        = - ---------
-                                   3, 3, 1         a
-
-     (%t10)                   mcs        = - cos(y) sin(y)
-                                 3, 3, 2
-
-                                                 d
-                                                  x
-     (%t11)                         mcs        = ---
-                                       4, 4, 1   2 a
-     (%o11)                               done
-
-
-File: maxima.info,  Node: Functions and Variables for ctensor,  Prev: Introduction to ctensor,  Up: ctensor
-
-26.2 Functions and Variables for ctensor
-========================================
-
-26.2.1 Initialization and setup
--------------------------------
-
- -- Function: csetup ()
-     A function in the 'ctensor' (component tensor) package which
-     initializes the package and allows the user to enter a metric
-     interactively.  See 'ctensor' for more details.
-
- -- Function: cmetric
-          cmetric (<dis>)
-          cmetric ()
-
-     A function in the 'ctensor' (component tensor) package that
-     computes the metric inverse and sets up the package for further
-     calculations.
-
-     If 'cframe_flag' is 'false', the function computes the inverse
-     metric 'ug' from the (user-defined) matrix 'lg'.  The metric
-     determinant is also computed and stored in the variable 'gdet'.
-     Furthermore, the package determines if the metric is diagonal and
-     sets the value of 'diagmetric' accordingly.  If the optional
-     argument <dis> is present and not equal to 'false', the user is
-     prompted to see the metric inverse.
-
-     If 'cframe_flag' is 'true', the function expects that the values of
-     'fri' (the inverse frame matrix) and 'lfg' (the frame metric) are
-     defined.  From these, the frame matrix 'fr' and the inverse frame
-     metric 'ufg' are computed.
-
- -- Function: ct_coordsys
-          ct_coordsys (<coordinate_system>, <extra_arg>)
-          ct_coordsys (<coordinate_system>)
-
-     Sets up a predefined coordinate system and metric.  The argument
-     <coordinate_system> can be one of the following symbols:
-
-
-           SYMBOL             Dim Coordinates     Description/comments
-           ------------------------------------------------------------------
-           cartesian2d           2  [x,y]             Cartesian 2D coordinate
-                                                      system
-           polar                 2  [r,phi]           Polar coordinate system
-           elliptic              2  [u,v]             Elliptic coord. system
-           confocalelliptic      2  [u,v]             Confocal elliptic
-                                                      coordinates
-           bipolar               2  [u,v]             Bipolar coord. system
-           parabolic             2  [u,v]             Parabolic coord. system
-           cartesian3d           3  [x,y,z]           Cartesian 3D coordinate
-                                                      system
-           polarcylindrical      3  [r,theta,z]       Polar 2D with
-                                                      cylindrical z
-           ellipticcylindrical   3  [u,v,z]           Elliptic 2D with
-                                                      cylindrical z
-           confocalellipsoidal   3  [u,v,w]           Confocal ellipsoidal
-           bipolarcylindrical    3  [u,v,z]           Bipolar 2D with
-                                                      cylindrical z
-           paraboliccylindrical  3  [u,v,z]           Parabolic 2D with
-                                                      cylindrical z
-           paraboloidal          3  [u,v,phi]         Paraboloidal coords.
-           conical               3  [u,v,w]           Conical coordinates
-           toroidal              3  [phi,u,v]         Toroidal coordinates
-           spherical             3  [r,theta,phi]     Spherical coord. system
-           oblatespheroidal      3  [u,v,phi]         Oblate spheroidal
-                                                      coordinates
-           oblatespheroidalsqrt  3  [u,v,phi]
-           prolatespheroidal     3  [u,v,phi]         Prolate spheroidal
-                                                      coordinates
-           prolatespheroidalsqrt 3  [u,v,phi]
-           ellipsoidal           3  [r,theta,phi]     Ellipsoidal coordinates
-           cartesian4d           4  [x,y,z,t]         Cartesian 4D coordinate
-                                                      system
-           spherical4d           4  [r,theta,eta,phi] Spherical 4D coordinate
-                                                      system
-           exteriorschwarzschild 4  [t,r,theta,phi]   Schwarzschild metric
-           interiorschwarzschild 4  [t,z,u,v]         Interior Schwarzschild
-                                                      metric
-           kerr_newman           4  [t,r,theta,phi]   Charged axially
-                                                      symmetric metric
-
-     'coordinate_system' can also be a list of transformation functions,
-     followed by a list containing the coordinate variables.  For
-     instance, you can specify a spherical metric as follows:
-
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) ct_coordsys([r*cos(theta)*cos(phi),r*cos(theta)*sin(phi),
-                r*sin(theta),[r,theta,phi]]);
-          (%o2)                                done
-          (%i3) lg:trigsimp(lg);
-                                     [ 1  0         0        ]
-                                     [                       ]
-                                     [     2                 ]
-          (%o3)                      [ 0  r         0        ]
-                                     [                       ]
-                                     [         2    2        ]
-                                     [ 0  0   r  cos (theta) ]
-          (%i4) ct_coords;
-          (%o4)                           [r, theta, phi]
-          (%i5) dim;
-          (%o5)                                  3
-
-     Transformation functions can also be used when 'cframe_flag' is
-     'true':
-
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) cframe_flag:true;
-          (%o2)                                true
-          (%i3) ct_coordsys([r*cos(theta)*cos(phi),r*cos(theta)*sin(phi),
-                r*sin(theta),[r,theta,phi]]);
-          (%o3)                                done
-          (%i4) fri;
-          (%o4)
-           [cos(phi)cos(theta) -cos(phi) r sin(theta) -sin(phi) r cos(theta)]
-           [                                                                ]
-           [sin(phi)cos(theta) -sin(phi) r sin(theta)  cos(phi) r cos(theta)]
-           [                                                                ]
-           [    sin(theta)           r cos(theta)                0          ]
-
-          (%i5) cmetric();
-          (%o5)                                false
-          (%i6) lg:trigsimp(lg);
-                                     [ 1  0         0        ]
-                                     [                       ]
-                                     [     2                 ]
-          (%o6)                      [ 0  r         0        ]
-                                     [                       ]
-                                     [         2    2        ]
-                                     [ 0  0   r  cos (theta) ]
-
-     The optional argument <extra_arg> can be any one of the following:
-
-     'cylindrical' tells 'ct_coordsys' to attach an additional
-     cylindrical coordinate.
-
-     'minkowski' tells 'ct_coordsys' to attach an additional coordinate
-     with negative metric signature.
-
-     'all' tells 'ct_coordsys' to call 'cmetric' and 'christof(false)'
-     after setting up the metric.
-
-     If the global variable 'verbose' is set to 'true', 'ct_coordsys'
-     displays the values of 'dim', 'ct_coords', and either 'lg' or 'lfg'
-     and 'fri', depending on the value of 'cframe_flag'.
-
- -- Function: init_ctensor ()
-     Initializes the 'ctensor' package.
-
-     The 'init_ctensor' function reinitializes the 'ctensor' package.
-     It removes all arrays and matrices used by 'ctensor', resets all
-     flags, resets 'dim' to 4, and resets the frame metric to the
-     Lorentz-frame.
-
-26.2.2 The tensors of curved space
-----------------------------------
-
-The main purpose of the 'ctensor' package is to compute the tensors of
-curved space(time), most notably the tensors used in general relativity.
-
-   When a metric base is used, 'ctensor' can compute the following
-tensors:
-
-
-      lg  -- ug
-        \      \
-         lcs -- mcs -- ric -- uric
-                   \      \       \
-                    \      tracer - ein -- lein
-                     \
-                      riem -- lriem -- weyl
-                          \
-                           uriem
-
-
-   'ctensor' can also work using moving frames.  When 'cframe_flag' is
-set to 'true', the following tensors can be calculated:
-
-
-      lfg -- ufg
-          \
-      fri -- fr -- lcs -- mcs -- lriem -- ric -- uric
-           \                       |  \      \       \
-            lg -- ug               |   weyl   tracer - ein -- lein
-                                   |\
-                                   | riem
-                                   |
-                                   \uriem
-
- -- Function: christof (<dis>)
-     A function in the 'ctensor' (component tensor) package.  It
-     computes the Christoffel symbols of both kinds.  The argument <dis>
-     determines which results are to be immediately displayed.  The
-     Christoffel symbols of the first and second kinds are stored in the
-     arrays 'lcs[i,j,k]' and 'mcs[i,j,k]' respectively and defined to be
-     symmetric in the first two indices.  If the argument to 'christof'
-     is 'lcs' or 'mcs' then the unique non-zero values of 'lcs[i,j,k]'
-     or 'mcs[i,j,k]', respectively, will be displayed.  If the argument
-     is 'all' then the unique non-zero values of 'lcs[i,j,k]' and
-     'mcs[i,j,k]' will be displayed.  If the argument is 'false' then
-     the display of the elements will not occur.  The array elements
-     'mcs[i,j,k]' are defined in such a manner that the final index is
-     contravariant.
-
- -- Function: ricci (<dis>)
-     A function in the 'ctensor' (component tensor) package.  'ricci'
-     computes the covariant (symmetric) components 'ric[i,j]' of the
-     Ricci tensor.  If the argument <dis> is 'true', then the non-zero
-     components are displayed.
-
- -- Function: uricci (<dis>)
-     This function first computes the covariant components 'ric[i,j]' of
-     the Ricci tensor.  Then the mixed Ricci tensor is computed using
-     the contravariant metric tensor.  If the value of the argument
-     <dis> is 'true', then these mixed components, 'uric[i,j]' (the
-     index 'i' is covariant and the index 'j' is contravariant), will be
-     displayed directly.  Otherwise, 'ricci(false)' will simply compute
-     the entries of the array 'uric[i,j]' without displaying the
-     results.
-
- -- Function: scurvature ()
-     Returns the scalar curvature (obtained by contracting the Ricci
-     tensor) of the Riemannian manifold with the given metric.
-
- -- Function: einstein (<dis>)
-     A function in the 'ctensor' (component tensor) package.  'einstein'
-     computes the mixed Einstein tensor after the Christoffel symbols
-     and Ricci tensor have been obtained (with the functions 'christof'
-     and 'ricci').  If the argument <dis> is 'true', then the non-zero
-     values of the mixed Einstein tensor 'ein[i,j]' will be displayed
-     where 'j' is the contravariant index.  The variable 'rateinstein'
-     will cause the rational simplification on these components.  If
-     'ratfac' is 'true' then the components will also be factored.
-
- -- Function: leinstein (<dis>)
-     Covariant Einstein-tensor.  'leinstein' stores the values of the
-     covariant Einstein tensor in the array 'lein'.  The covariant
-     Einstein-tensor is computed from the mixed Einstein tensor 'ein' by
-     multiplying it with the metric tensor.  If the argument <dis> is
-     'true', then the non-zero values of the covariant Einstein tensor
-     are displayed.
-
- -- Function: riemann (<dis>)
-     A function in the 'ctensor' (component tensor) package.  'riemann'
-     computes the Riemann curvature tensor from the given metric and the
-     corresponding Christoffel symbols.  The following index conventions
-     are used:
-
-                          l      _l       _l       _l   _m    _l   _m
-           R[i,j,k,l] =  R    = |      - |      + |    |   - |    |
-                          ijk     ij,k     ik,j     mk   ij    mj   ik
-
-     This notation is consistent with the notation used by the 'itensor'
-     package and its 'icurvature' function.  If the optional argument
-     <dis> is 'true', the unique non-zero components 'riem[i,j,k,l]'
-     will be displayed.  As with the Einstein tensor, various switches
-     set by the user control the simplification of the components of the
-     Riemann tensor.  If 'ratriemann' is 'true', then rational
-     simplification will be done.  If 'ratfac' is 'true' then each of
-     the components will also be factored.
-
-     If the variable 'cframe_flag' is 'false', the Riemann tensor is
-     computed directly from the Christoffel-symbols.  If 'cframe_flag'
-     is 'true', the covariant Riemann-tensor is computed first from the
-     frame field coefficients.
-
- -- Function: lriemann (<dis>)
-     Covariant Riemann-tensor ('lriem[]').
-
-     Computes the covariant Riemann-tensor as the array 'lriem'.  If the
-     argument <dis> is 'true', unique non-zero values are displayed.
-
-     If the variable 'cframe_flag' is 'true', the covariant Riemann
-     tensor is computed directly from the frame field coefficients.
-     Otherwise, the (3,1) Riemann tensor is computed first.
-
-     For information on index ordering, see 'riemann'.
-
- -- Function: uriemann (<dis>)
-     Computes the contravariant components of the Riemann curvature
-     tensor as array elements 'uriem[i,j,k,l]'.  These are displayed if
-     <dis> is 'true'.
-
- -- Function: rinvariant ()
-     Forms the Kretchmann-invariant ('kinvariant') obtained by
-     contracting the tensors
-
-          lriem[i,j,k,l]*uriem[i,j,k,l].
-
-     This object is not automatically simplified since it can be very
-     large.
-
- -- Function: weyl (<dis>)
-     Computes the Weyl conformal tensor.  If the argument <dis> is
-     'true', the non-zero components 'weyl[i,j,k,l]' will be displayed
-     to the user.  Otherwise, these components will simply be computed
-     and stored.  If the switch 'ratweyl' is set to 'true', then the
-     components will be rationally simplified; if 'ratfac' is 'true'
-     then the results will be factored as well.
-
-26.2.3 Taylor series expansion
-------------------------------
-
-The 'ctensor' package has the ability to truncate results by assuming
-that they are Taylor-series approximations.  This behavior is controlled
-by the 'ctayswitch' variable; when set to true, 'ctensor' makes use
-internally of the function 'ctaylor' when simplifying results.
-
-   The 'ctaylor' function is invoked by the following 'ctensor'
-functions:
-
-
-         Function     Comments
-         ---------------------------------
-         christof()   For mcs only
-         ricci()
-         uricci()
-         einstein()
-         riemann()
-         weyl()
-         checkdiv()
- -- Function: ctaylor ()
-
-     The 'ctaylor' function truncates its argument by converting it to a
-     Taylor-series using 'taylor', and then calling 'ratdisrep'.  This
-     has the combined effect of dropping terms higher order in the
-     expansion variable 'ctayvar'.  The order of terms that should be
-     dropped is defined by 'ctaypov'; the point around which the series
-     expansion is carried out is specified in 'ctaypt'.
-
-     As an example, consider a simple metric that is a perturbation of
-     the Minkowski metric.  Without further restrictions, even a
-     diagonal metric produces expressions for the Einstein tensor that
-     are far too complex:
-
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) ratfac:true;
-          (%o2)                                true
-          (%i3) derivabbrev:true;
-          (%o3)                                true
-          (%i4) ct_coords:[t,r,theta,phi];
-          (%o4)                         [t, r, theta, phi]
-          (%i5) lg:matrix([-1,0,0,0],[0,1,0,0],[0,0,r^2,0],
-                          [0,0,0,r^2*sin(theta)^2]);
-                                  [ - 1  0  0         0        ]
-                                  [                            ]
-                                  [  0   1  0         0        ]
-                                  [                            ]
-          (%o5)                   [          2                 ]
-                                  [  0   0  r         0        ]
-                                  [                            ]
-                                  [              2    2        ]
-                                  [  0   0  0   r  sin (theta) ]
-          (%i6) h:matrix([h11,0,0,0],[0,h22,0,0],[0,0,h33,0],[0,0,0,h44]);
-                                      [ h11   0    0    0  ]
-                                      [                    ]
-                                      [  0   h22   0    0  ]
-          (%o6)                       [                    ]
-                                      [  0    0   h33   0  ]
-                                      [                    ]
-                                      [  0    0    0   h44 ]
-          (%i7) depends(l,r);
-          (%o7)                               [l(r)]
-          (%i8) lg:lg+l*h;
-                [ h11 l - 1      0          0                 0            ]
-                [                                                          ]
-                [     0      h22 l + 1      0                 0            ]
-                [                                                          ]
-          (%o8) [                        2                                 ]
-                [     0          0      r  + h33 l            0            ]
-                [                                                          ]
-                [                                    2    2                ]
-                [     0          0          0       r  sin (theta) + h44 l ]
-          (%i9) cmetric(false);
-          (%o9)                                done
-          (%i10) einstein(false);
-          (%o10)                               done
-          (%i11) ntermst(ein);
-          [[1, 1], 62]
-          [[1, 2], 0]
-          [[1, 3], 0]
-          [[1, 4], 0]
-          [[2, 1], 0]
-          [[2, 2], 24]
-          [[2, 3], 0]
-          [[2, 4], 0]
-          [[3, 1], 0]
-          [[3, 2], 0]
-          [[3, 3], 46]
-          [[3, 4], 0]
-          [[4, 1], 0]
-          [[4, 2], 0]
-          [[4, 3], 0]
-          [[4, 4], 46]
-          (%o12)                               done
-
-     However, if we recompute this example as an approximation that is
-     linear in the variable 'l', we get much simpler expressions:
-
-
-          (%i14) ctayswitch:true;
-          (%o14)                               true
-          (%i15) ctayvar:l;
-          (%o15)                                 l
-          (%i16) ctaypov:1;
-          (%o16)                                 1
-          (%i17) ctaypt:0;
-          (%o17)                                 0
-          (%i18) christof(false);
-          (%o18)                               done
-          (%i19) ricci(false);
-          (%o19)                               done
-          (%i20) einstein(false);
-          (%o20)                               done
-          (%i21) ntermst(ein);
-          [[1, 1], 6]
-          [[1, 2], 0]
-          [[1, 3], 0]
-          [[1, 4], 0]
-          [[2, 1], 0]
-          [[2, 2], 13]
-          [[2, 3], 2]
-          [[2, 4], 0]
-          [[3, 1], 0]
-          [[3, 2], 2]
-          [[3, 3], 9]
-          [[3, 4], 0]
-          [[4, 1], 0]
-          [[4, 2], 0]
-          [[4, 3], 0]
-          [[4, 4], 9]
-          (%o21)                               done
-          (%i22) ratsimp(ein[1,1]);
-                                   2      2  4               2     2
-          (%o22) - (((h11 h22 - h11 ) (l )  r  - 2 h33 l    r ) sin (theta)
-                                        r               r r
-
-                                      2               2      4    2
-                        - 2 h44 l    r  - h33 h44 (l ) )/(4 r  sin (theta))
-                                 r r                r
-
-
-
-     This capability can be useful, for instance, when working in the
-     weak field limit far from a gravitational source.
-
-26.2.4 Frame fields
--------------------
-
-When the variable 'cframe_flag' is set to true, the 'ctensor' package
-performs its calculations using a moving frame.
- -- Function: frame_bracket (<fr>, <fri>, <diagframe>)
-     The frame bracket ('fb[]').
-
-     Computes the frame bracket according to the following definition:
-
-             c          c         c        d     e
-          ifb   = ( ifri    - ifri    ) ifr   ifr
-             ab         d,e       e,d      a     b
-
-26.2.5 Algebraic classification
--------------------------------
-
-A new feature (as of November, 2004) of 'ctensor' is its ability to
-compute the Petrov classification of a 4-dimensional spacetime metric.
-For a demonstration of this capability, see the file
-'share/tensor/petrov.dem'.
- -- Function: nptetrad ()
-     Computes a Newman-Penrose null tetrad ('np') and its raised-index
-     counterpart ('npi').  See 'petrov' for an example.
-
-     The null tetrad is constructed on the assumption that a
-     four-dimensional orthonormal frame metric with metric signature
-     (-,+,+,+) is being used.  The components of the null tetrad are
-     related to the inverse frame matrix as follows:
-
-
-          np  = (fri  + fri ) / sqrt(2)
-            1       1      2
-
-          np  = (fri  - fri ) / sqrt(2)
-            2       1      2
-
-          np  = (fri  + %i fri ) / sqrt(2)
-            3       3         4
-
-          np  = (fri  - %i fri ) / sqrt(2)
-            4       3         4
-
- -- Function: psi (<dis>)
-     Computes the five Newman-Penrose coefficients 'psi[0]'...'psi[4]'.
-     If 'dis' is set to 'true', the coefficients are displayed.  See
-     'petrov' for an example.
-
-     These coefficients are computed from the Weyl-tensor in a
-     coordinate base.  If a frame base is used, the Weyl-tensor is first
-     converted to a coordinate base, which can be a computationally
-     expensive procedure.  For this reason, in some cases it may be more
-     advantageous to use a coordinate base in the first place before the
-     Weyl tensor is computed.  Note however, that constructing a
-     Newman-Penrose null tetrad requires a frame base.  Therefore, a
-     meaningful computation sequence may begin with a frame base, which
-     is then used to compute 'lg' (computed automatically by 'cmetric')
-     and then 'ug'.  See 'petrov' for an example.  At this point, you
-     can switch back to a coordinate base by setting 'cframe_flag' to
-     false before beginning to compute the Christoffel symbols.
-     Changing to a frame base at a later stage could yield inconsistent
-     results, as you may end up with a mixed bag of tensors, some
-     computed in a frame base, some in a coordinate base, with no means
-     to distinguish between the two.
-
- -- Function: petrov ()
-     Computes the Petrov classification of the metric characterized by
-     'psi[0]'...'psi[4]'.
-
-     For example, the following demonstrates how to obtain the
-     Petrov-classification of the Kerr metric:
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) (cframe_flag:true,gcd:spmod,ctrgsimp:true,ratfac:true);
-          (%o2)                                true
-          (%i3) ct_coordsys(exteriorschwarzschild,all);
-          (%o3)                                done
-          (%i4) ug:invert(lg)$
-          (%i5) weyl(false);
-          (%o5)                                done
-          (%i6) nptetrad(true);
-          (%t6) np =
-
-          [ sqrt(r - 2 m)           sqrt(r)                                 ]
-          [---------------   ---------------------    0            0        ]
-          [sqrt(2) sqrt(r)   sqrt(2) sqrt(r - 2 m)                          ]
-          [                                                                 ]
-          [ sqrt(r - 2 m)            sqrt(r)                                ]
-          [---------------  - ---------------------   0            0        ]
-          [sqrt(2) sqrt(r)    sqrt(2) sqrt(r - 2 m)                         ]
-          [                                                                 ]
-          [                                          r      %i r sin(theta) ]
-          [       0                    0          -------   --------------- ]
-          [                                       sqrt(2)       sqrt(2)     ]
-          [                                                                 ]
-          [                                          r       %i r sin(theta)]
-          [       0                    0          -------  - ---------------]
-          [                                       sqrt(2)        sqrt(2)    ]
-
-                                       sqrt(r)         sqrt(r - 2 m)
-          (%t7) npi = matrix([- ---------------------,---------------, 0, 0],
-                                sqrt(2) sqrt(r - 2 m) sqrt(2) sqrt(r)
-
-                    sqrt(r)            sqrt(r - 2 m)
-          [- ---------------------, - ---------------, 0, 0],
-             sqrt(2) sqrt(r - 2 m)    sqrt(2) sqrt(r)
-
-                     1               %i
-          [0, 0, ---------, --------------------],
-                 sqrt(2) r  sqrt(2) r sin(theta)
-
-                     1                 %i
-          [0, 0, ---------, - --------------------])
-                 sqrt(2) r    sqrt(2) r sin(theta)
-
-          (%o7)                                done
-          (%i7) psi(true);
-          (%t8)                              psi  = 0
-                                                0
-
-          (%t9)                              psi  = 0
-                                                1
-
-                                                    m
-          (%t10)                             psi  = --
-                                                2    3
-                                                    r
-
-          (%t11)                             psi  = 0
-                                                3
-
-          (%t12)                             psi  = 0
-                                                4
-          (%o12)                               done
-          (%i12) petrov();
-          (%o12)                                 D
-
-     The Petrov classification function is based on the algorithm
-     published in "Classifying geometries in general relativity: III
-     Classification in practice" by Pollney, Skea, and d'Inverno, Class.
-     Quant.  Grav.  17 2885-2902 (2000).  Except for some simple test
-     cases, the implementation is untested as of December 19, 2004, and
-     is likely to contain errors.
-
-26.2.6 Torsion and nonmetricity
--------------------------------
-
-'ctensor' has the ability to compute and include torsion and
-nonmetricity coefficients in the connection coefficients.
-
-   The torsion coefficients are calculated from a user-supplied tensor
-'tr', which should be a rank (2,1) tensor.  From this, the torsion
-coefficients 'kt' are computed according to the following formulae:
-
-
-                   m          m      m
-            - g  tr   - g   tr   - tr   g
-               im  kj    jm   ki     ij  km
-     kt   = -------------------------------
-       ijk                 2
-
-
-       k     km
-     kt   = g   kt
-       ij         ijm
-
-   Note that only the mixed-index tensor is calculated and stored in the
-array 'kt'.
-
-   The nonmetricity coefficients are calculated from the user-supplied
-nonmetricity vector 'nm'.  From this, the nonmetricity coefficients
-'nmc' are computed as follows:
-
-
-                  k    k        km
-            -nm  D  - D  nm  + g   nm  g
-        k      i  j    i   j         m  ij
-     nmc  = ------------------------------
-        ij                2
-
-   where D stands for the Kronecker-delta.
-
-   When 'ctorsion_flag' is set to 'true', the values of 'kt' are
-subtracted from the mixed-indexed connection coefficients computed by
-'christof' and stored in 'mcs'.  Similarly, if 'cnonmet_flag' is set to
-'true', the values of 'nmc' are subtracted from the mixed-indexed
-connection coefficients.
-
-   If necessary, 'christof' calls the functions 'contortion' and
-'nonmetricity' in order to compute 'kt' and 'nm'.
- -- Function: contortion (<tr>)
-
-     Computes the (2,1) contortion coefficients from the torsion tensor
-     <tr>.
-
- -- Function: nonmetricity (<nm>)
-
-     Computes the (2,1) nonmetricity coefficients from the nonmetricity
-     vector <nm>.
-
-26.2.7 Miscellaneous features
------------------------------
-
- -- Function: ctransform (<M>)
-     A function in the 'ctensor' (component tensor) package which will
-     perform a coordinate transformation upon an arbitrary square
-     symmetric matrix <M>.  The user must input the functions which
-     define the transformation.  (Formerly called 'transform'.)
-
- -- Function: findde (<A>, <n>)
-
-     returns a list of the unique differential equations (expressions)
-     corresponding to the elements of the <n> dimensional square array
-     <A>.  Presently, <n> may be 2 or 3.  'deindex' is a global list
-     containing the indices of <A> corresponding to these unique
-     differential equations.  For the Einstein tensor ('ein'), which is
-     a two dimensional array, if computed for the metric in the example
-     below, 'findde' gives the following independent differential
-     equations:
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) derivabbrev:true;
-          (%o2)                                true
-          (%i3) dim:4;
-          (%o3)                                  4
-          (%i4) lg:matrix([a, 0, 0, 0], [ 0, x^2, 0, 0],
-                                        [0, 0, x^2*sin(y)^2, 0], [0,0,0,-d]);
-                                    [ a  0       0        0  ]
-                                    [                        ]
-                                    [     2                  ]
-                                    [ 0  x       0        0  ]
-          (%o4)                     [                        ]
-                                    [         2    2         ]
-                                    [ 0  0   x  sin (y)   0  ]
-                                    [                        ]
-                                    [ 0  0       0       - d ]
-          (%i5) depends([a,d],x);
-          (%o5)                            [a(x), d(x)]
-          (%i6) ct_coords:[x,y,z,t];
-          (%o6)                            [x, y, z, t]
-          (%i7) cmetric();
-          (%o7)                                done
-          (%i8) einstein(false);
-          (%o8)                                done
-          (%i9) findde(ein,2);
-                                                      2
-          (%o9) [d  x - a d + d, 2 a d d    x - a (d )  x - a  d d  x
-                  x                     x x         x        x    x
-
-                                                        2          2
-                                    + 2 a d d   - 2 a  d , a  x + a  - a]
-                                             x       x      x
-          (%i10) deindex;
-          (%o10)                     [[1, 1], [2, 2], [4, 4]]
-
- -- Function: cograd ()
-     Computes the covariant gradient of a scalar function allowing the
-     user to choose the corresponding vector name as the example under
-     'contragrad' illustrates.
-
- -- Function: contragrad ()
-
-     Computes the contravariant gradient of a scalar function allowing
-     the user to choose the corresponding vector name as the example
-     below for the Schwarzschild metric illustrates:
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) derivabbrev:true;
-          (%o2)                                true
-          (%i3) ct_coordsys(exteriorschwarzschild,all);
-          (%o3)                                done
-          (%i4) depends(f,r);
-          (%o4)                               [f(r)]
-          (%i5) cograd(f,g1);
-          (%o5)                                done
-          (%i6) listarray(g1);
-          (%o6)                            [0, f , 0, 0]
-                                                r
-          (%i7) contragrad(f,g2);
-          (%o7)                                done
-          (%i8) listarray(g2);
-                                         f  r - 2 f  m
-                                          r        r
-          (%o8)                      [0, -------------, 0, 0]
-                                               r
-
- -- Function: dscalar ()
-     computes the tensor d'Alembertian of the scalar function once
-     dependencies have been declared upon the function.  For example:
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) derivabbrev:true;
-          (%o2)                                true
-          (%i3) ct_coordsys(exteriorschwarzschild,all);
-          (%o3)                                done
-          (%i4) depends(p,r);
-          (%o4)                               [p(r)]
-          (%i5) factor(dscalar(p));
-                                    2
-                              p    r  - 2 m p    r + 2 p  r - 2 m p
-                               r r           r r        r          r
-          (%o5)               --------------------------------------
-                                                 2
-                                                r
-
- -- Function: checkdiv ()
-
-     computes the covariant divergence of the mixed second rank tensor
-     (whose first index must be covariant) by printing the corresponding
-     n components of the vector field (the divergence) where n = 'dim'.
-     If the argument to the function is 'g' then the divergence of the
-     Einstein tensor will be formed and must be zero.  In addition, the
-     divergence (vector) is given the array name 'div'.
-
- -- Function: cgeodesic (<dis>)
-     A function in the 'ctensor' (component tensor) package.
-     'cgeodesic' computes the geodesic equations of motion for a given
-     metric.  They are stored in the array 'geod[i]'.  If the argument
-     <dis> is 'true' then these equations are displayed.
-
- -- Function: bdvac (<f>)
-
-     generates the covariant components of the vacuum field equations of
-     the Brans- Dicke gravitational theory.  The scalar field is
-     specified by the argument <f>, which should be a (quoted) function
-     name with functional dependencies, e.g., ''p(x)'.
-
-     The components of the second rank covariant field tensor are
-     represented by the array 'bd'.
-
- -- Function: invariant1 ()
-
-     generates the mixed Euler- Lagrange tensor (field equations) for
-     the invariant density of R^2.  The field equations are the
-     components of an array named 'inv1'.
-
- -- Function: invariant2 ()
-
-     *** NOT YET IMPLEMENTED ***
-
-     generates the mixed Euler- Lagrange tensor (field equations) for
-     the invariant density of 'ric[i,j]*uriem[i,j]'.  The field
-     equations are the components of an array named 'inv2'.
-
- -- Function: bimetric ()
-
-     *** NOT YET IMPLEMENTED ***
-
-     generates the field equations of Rosen's bimetric theory.  The
-     field equations are the components of an array named 'rosen'.
-
-26.2.8 Utility functions
-------------------------
-
- -- Function: diagmatrixp (<M>,<n>)
-
-     Returns 'true' if the first <n> rows and <n> columns of <M> form a
-     diagonal matrix or (2D) array.
-
- -- Function: symmetricp (<M>, <n>)
-
-     Returns 'true' if <M> is a <n> by <n> symmetric matrix or
-     two-dimensional array, otherwise 'false'.
-
-     If <n> is less than the size of <M>, 'symmetricp' considers only
-     the <n> by <n> submatrix (respectively, subarray) comprising rows 1
-     through <n> and columns 1 through <n>.
-
- -- Function: ntermst (<f>)
-     gives the user a quick picture of the "size" of the doubly
-     subscripted tensor (array) <f>.  It prints two element lists where
-     the second element corresponds to NTERMS of the components
-     specified by the first elements.  In this way, it is possible to
-     quickly find the non-zero expressions and attempt simplification.
-
- -- Function: cdisplay (<ten>)
-     displays all the elements of the tensor <ten>, as represented by a
-     multidimensional array.  Tensors of rank 0 and 1, as well as other
-     types of variables, are displayed as with 'ldisplay'.  Tensors of
-     rank 2 are displayed as 2-dimensional matrices, while tensors of
-     higher rank are displayed as a list of 2-dimensional matrices.  For
-     instance, the Riemann-tensor of the Schwarzschild metric can be
-     viewed as:
-
-          (%i1) load(ctensor);
-          (%o1)       /share/tensor/ctensor.mac
-          (%i2) ratfac:true;
-          (%o2)                                true
-          (%i3) ct_coordsys(exteriorschwarzschild,all);
-          (%o3)                                done
-          (%i4) riemann(false);
-          (%o4)                                done
-          (%i5) cdisplay(riem);
-                    [ 0               0                   0           0     ]
-                    [                                                       ]
-                    [                              2                        ]
-                    [      3 m (r - 2 m)   m    2 m                         ]
-                    [ 0  - ------------- + -- - ----      0           0     ]
-                    [            4          3     4                         ]
-                    [           r          r     r                          ]
-                    [                                                       ]
-          riem    = [                                m (r - 2 m)            ]
-              1, 1  [ 0               0              -----------      0     ]
-                    [                                     4                 ]
-                    [                                    r                  ]
-                    [                                                       ]
-                    [                                           m (r - 2 m) ]
-                    [ 0               0                   0     ----------- ]
-                    [                                                4      ]
-                    [                                               r       ]
-
-                                          [    2 m (r - 2 m)       ]
-                                          [ 0  -------------  0  0 ]
-                                          [          4             ]
-                                          [         r              ]
-                               riem     = [                        ]
-                                   1, 2   [ 0        0        0  0 ]
-                                          [                        ]
-                                          [ 0        0        0  0 ]
-                                          [                        ]
-                                          [ 0        0        0  0 ]
-
-                                          [         m (r - 2 m)    ]
-                                          [ 0  0  - -----------  0 ]
-                                          [              4         ]
-                                          [             r          ]
-                               riem     = [                        ]
-                                   1, 3   [ 0  0        0        0 ]
-                                          [                        ]
-                                          [ 0  0        0        0 ]
-                                          [                        ]
-                                          [ 0  0        0        0 ]
-
-                                          [            m (r - 2 m) ]
-                                          [ 0  0  0  - ----------- ]
-                                          [                 4      ]
-                                          [                r       ]
-                               riem     = [                        ]
-                                   1, 4   [ 0  0  0        0       ]
-                                          [                        ]
-                                          [ 0  0  0        0       ]
-                                          [                        ]
-                                          [ 0  0  0        0       ]
-
-                                         [       0         0  0  0 ]
-                                         [                         ]
-                                         [       2 m               ]
-                                         [ - ------------  0  0  0 ]
-                              riem     = [    2                    ]
-                                  2, 1   [   r  (r - 2 m)          ]
-                                         [                         ]
-                                         [       0         0  0  0 ]
-                                         [                         ]
-                                         [       0         0  0  0 ]
-
-                       [     2 m                                         ]
-                       [ ------------  0        0               0        ]
-                       [  2                                              ]
-                       [ r  (r - 2 m)                                    ]
-                       [                                                 ]
-                       [      0        0        0               0        ]
-                       [                                                 ]
-            riem     = [                         m                       ]
-                2, 2   [      0        0  - ------------        0        ]
-                       [                     2                           ]
-                       [                    r  (r - 2 m)                 ]
-                       [                                                 ]
-                       [                                         m       ]
-                       [      0        0        0         - ------------ ]
-                       [                                     2           ]
-                       [                                    r  (r - 2 m) ]
-
-                                          [ 0  0       0        0 ]
-                                          [                       ]
-                                          [            m          ]
-                                          [ 0  0  ------------  0 ]
-                               riem     = [        2              ]
-                                   2, 3   [       r  (r - 2 m)    ]
-                                          [                       ]
-                                          [ 0  0       0        0 ]
-                                          [                       ]
-                                          [ 0  0       0        0 ]
-
-                                          [ 0  0  0       0       ]
-                                          [                       ]
-                                          [               m       ]
-                                          [ 0  0  0  ------------ ]
-                               riem     = [           2           ]
-                                   2, 4   [          r  (r - 2 m) ]
-                                          [                       ]
-                                          [ 0  0  0       0       ]
-                                          [                       ]
-                                          [ 0  0  0       0       ]
-
-                                                [ 0  0  0  0 ]
-                                                [            ]
-                                                [ 0  0  0  0 ]
-                                                [            ]
-                                     riem     = [ m          ]
-                                         3, 1   [ -  0  0  0 ]
-                                                [ r          ]
-                                                [            ]
-                                                [ 0  0  0  0 ]
-
-                                                [ 0  0  0  0 ]
-                                                [            ]
-                                                [ 0  0  0  0 ]
-                                                [            ]
-                                     riem     = [    m       ]
-                                         3, 2   [ 0  -  0  0 ]
-                                                [    r       ]
-                                                [            ]
-                                                [ 0  0  0  0 ]
-
-                                         [   m                      ]
-                                         [ - -   0   0       0      ]
-                                         [   r                      ]
-                                         [                          ]
-                                         [        m                 ]
-                                         [  0   - -  0       0      ]
-                              riem     = [        r                 ]
-                                  3, 3   [                          ]
-                                         [  0    0   0       0      ]
-                                         [                          ]
-                                         [              2 m - r     ]
-                                         [  0    0   0  ------- + 1 ]
-                                         [                 r        ]
-
-                                              [ 0  0  0    0   ]
-                                              [                ]
-                                              [ 0  0  0    0   ]
-                                              [                ]
-                                   riem     = [            2 m ]
-                                       3, 4   [ 0  0  0  - --- ]
-                                              [             r  ]
-                                              [                ]
-                                              [ 0  0  0    0   ]
-
-                                          [       0        0  0  0 ]
-                                          [                        ]
-                                          [       0        0  0  0 ]
-                                          [                        ]
-                               riem     = [       0        0  0  0 ]
-                                   4, 1   [                        ]
-                                          [      2                 ]
-                                          [ m sin (theta)          ]
-                                          [ -------------  0  0  0 ]
-                                          [       r                ]
-
-                                          [ 0        0        0  0 ]
-                                          [                        ]
-                                          [ 0        0        0  0 ]
-                                          [                        ]
-                               riem     = [ 0        0        0  0 ]
-                                   4, 2   [                        ]
-                                          [         2              ]
-                                          [    m sin (theta)       ]
-                                          [ 0  -------------  0  0 ]
-                                          [          r             ]
-
-                                        [ 0  0          0          0 ]
-                                        [                            ]
-                                        [ 0  0          0          0 ]
-                                        [                            ]
-                             riem     = [ 0  0          0          0 ]
-                                 4, 3   [                            ]
-                                        [                2           ]
-                                        [         2 m sin (theta)    ]
-                                        [ 0  0  - ---------------  0 ]
-                                        [                r           ]
-
-                     [        2                                             ]
-                     [   m sin (theta)                                      ]
-                     [ - -------------         0                0         0 ]
-                     [         r                                            ]
-                     [                                                      ]
-                     [                         2                            ]
-                     [                    m sin (theta)                     ]
-          riem     = [        0         - -------------         0         0 ]
-              4, 4   [                          r                           ]
-                     [                                                      ]
-                     [                                          2           ]
-                     [                                   2 m sin (theta)    ]
-                     [        0                0         ---------------  0 ]
-                     [                                          r           ]
-                     [                                                      ]
-                     [        0                0                0         0 ]
-
-          (%o5)                                done
-
- -- Function: deleten (<L>, <n>)
-     Returns a new list consisting of <L> with the <n>'th element
-     deleted.
-
-26.2.9 Variables used by 'ctensor'
-----------------------------------
-
- -- Option variable: dim
-     Default value: 4
-
-     An option in the 'ctensor' (component tensor) package.  'dim' is
-     the dimension of the manifold with the default 4.  The command
-     'dim: n' will reset the dimension to any other value 'n'.
-
- -- Option variable: diagmetric
-     Default value: 'false'
-
-     An option in the 'ctensor' (component tensor) package.  If
-     'diagmetric' is 'true' special routines compute all geometrical
-     objects (which contain the metric tensor explicitly) by taking into
-     consideration the diagonality of the metric.  Reduced run times
-     will, of course, result.  Note: this option is set automatically by
-     'csetup' if a diagonal metric is specified.
-
- -- Option variable: ctrgsimp
-
-     Causes trigonometric simplifications to be used when tensors are
-     computed.  Presently, 'ctrgsimp' affects only computations
-     involving a moving frame.
-
- -- Option variable: cframe_flag
-
-     Causes computations to be performed relative to a moving frame as
-     opposed to a holonomic metric.  The frame is defined by the inverse
-     frame array 'fri' and the frame metric 'lfg'.  For computations
-     using a Cartesian frame, 'lfg' should be the unit matrix of the
-     appropriate dimension; for computations in a Lorentz frame, 'lfg'
-     should have the appropriate signature.
-
- -- Option variable: ctorsion_flag
-
-     Causes the contortion tensor to be included in the computation of
-     the connection coefficients.  The contortion tensor itself is
-     computed by 'contortion' from the user-supplied tensor 'tr'.
-
- -- Option variable: cnonmet_flag
-
-     Causes the nonmetricity coefficients to be included in the
-     computation of the connection coefficients.  The nonmetricity
-     coefficients are computed from the user-supplied nonmetricity
-     vector 'nm' by the function 'nonmetricity'.
-
- -- Option variable: ctayswitch
-
-     If set to 'true', causes some 'ctensor' computations to be carried
-     out using Taylor-series expansions.  Presently, 'christof',
-     'ricci', 'uricci', 'einstein', and 'weyl' take into account this
-     setting.
-
- -- Option variable: ctayvar
-
-     Variable used for Taylor-series expansion if 'ctayswitch' is set to
-     'true'.
-
- -- Option variable: ctaypov
-
-     Maximum power used in Taylor-series expansion when 'ctayswitch' is
-     set to 'true'.
-
- -- Option variable: ctaypt
-
-     Point around which Taylor-series expansion is carried out when
-     'ctayswitch' is set to 'true'.
-
- -- System variable: gdet
-
-     The determinant of the metric tensor 'lg'.  Computed by 'cmetric'
-     when 'cframe_flag' is set to 'false'.
-
- -- Option variable: ratchristof
-
-     Causes rational simplification to be applied by 'christof'.
-
- -- Option variable: rateinstein
-     Default value: 'true'
-
-     If 'true' rational simplification will be performed on the non-zero
-     components of Einstein tensors; if 'ratfac' is 'true' then the
-     components will also be factored.
-
- -- Option variable: ratriemann
-     Default value: 'true'
-
-     One of the switches which controls simplification of Riemann
-     tensors; if 'true', then rational simplification will be done; if
-     'ratfac' is 'true' then each of the components will also be
-     factored.
-
- -- Option variable: ratweyl
-     Default value: 'true'
-
-     If 'true', this switch causes the 'weyl' function to apply rational
-     simplification to the values of the Weyl tensor.  If 'ratfac' is
-     'true', then the components will also be factored.
-
- -- Variable: lfg
-     The covariant frame metric.  By default, it is initialized to the
-     4-dimensional Lorentz frame with signature (+,+,+,-).  Used when
-     'cframe_flag' is 'true'.
-
- -- Variable: ufg
-     The inverse frame metric.  Computed from 'lfg' when 'cmetric' is
-     called while 'cframe_flag' is set to 'true'.
-
- -- Variable: riem
-     The (3,1) Riemann tensor.  Computed when the function 'riemann' is
-     invoked.  For information about index ordering, see the description
-     of 'riemann'.
-
-     If 'cframe_flag' is 'true', 'riem' is computed from the covariant
-     Riemann-tensor 'lriem'.
-
- -- Variable: lriem
-
-     The covariant Riemann tensor.  Computed by 'lriemann'.
-
- -- Variable: uriem
-
-     The contravariant Riemann tensor.  Computed by 'uriemann'.
-
- -- Variable: ric
-
-     The mixed Ricci-tensor.  Computed by 'ricci'.
-
- -- Variable: uric
-
-     The contravariant Ricci-tensor.  Computed by 'uricci'.
-
- -- Variable: lg
-
-     The metric tensor.  This tensor must be specified (as a 'dim' by
-     'dim' matrix) before other computations can be performed.
-
- -- Variable: ug
-
-     The inverse of the metric tensor.  Computed by 'cmetric'.
-
- -- Variable: weyl
-
-     The Weyl tensor.  Computed by 'weyl'.
-
- -- Variable: fb
-
-     Frame bracket coefficients, as computed by 'frame_bracket'.
-
- -- Variable: kinvariant
-
-     The Kretchmann invariant.  Computed by 'rinvariant'.
-
- -- Variable: np
-
-     A Newman-Penrose null tetrad.  Computed by 'nptetrad'.
-
- -- Variable: npi
-
-     The raised-index Newman-Penrose null tetrad.  Computed by
-     'nptetrad'.  Defined as 'ug.np'.  The product 'np.transpose(npi)'
-     is constant:
-
-          (%i39) trigsimp(np.transpose(npi));
-                                        [  0   - 1  0  0 ]
-                                        [                ]
-                                        [ - 1   0   0  0 ]
-          (%o39)                        [                ]
-                                        [  0    0   0  1 ]
-                                        [                ]
-                                        [  0    0   1  0 ]
-
- -- Variable: tr
-
-     User-supplied rank-3 tensor representing torsion.  Used by
-     'contortion'.
-
- -- Variable: kt
-
-     The contortion tensor, computed from 'tr' by 'contortion'.
-
- -- Variable: nm
-
-     User-supplied nonmetricity vector.  Used by 'nonmetricity'.
-
- -- Variable: nmc
-
-     The nonmetricity coefficients, computed from 'nm' by
-     'nonmetricity'.
-
- -- System variable: tensorkill
-
-     Variable indicating if the tensor package has been initialized.
-     Set and used by 'csetup', reset by 'init_ctensor'.
-
- -- Option variable: ct_coords
-     Default value: '[]'
-
-     An option in the 'ctensor' (component tensor) package.  'ct_coords'
-     contains a list of coordinates.  While normally defined when the
-     function 'csetup' is called, one may redefine the coordinates with
-     the assignment 'ct_coords: [j1, j2, ..., jn]' where the j's are the
-     new coordinate names.  See also 'csetup'.
-
-26.2.10 Reserved names
-----------------------
-
-The following names are used internally by the 'ctensor' package and
-should not be redefined:
-
-       Name         Description
-       ---------------------------------------------------------------------
-       _lg()        Evaluates to lfg if frame metric used, lg otherwise
-       _ug()        Evaluates to ufg if frame metric used, ug otherwise
-       cleanup()    Removes items drom the deindex list
-       contract4()  Used by psi()
-       filemet()    Used by csetup() when reading the metric from a file
-       findde1()    Used by findde()
-       findde2()    Used by findde()
-       findde3()    Used by findde()
-       kdelt()      Kronecker-delta (not generalized)
-       newmet()     Used by csetup() for setting up a metric interactively
-       setflags()   Used by init_ctensor()
-       readvalue()
-       resimp()
-       sermet()     Used by csetup() for entering a metric as Taylor-series
-       txyzsum()
-       tmetric()    Frame metric, used by cmetric() when cframe_flag:true
-       triemann()   Riemann-tensor in frame base, used when cframe_flag:true
-       tricci()     Ricci-tensor in frame base, used when cframe_flag:true
-       trrc()       Ricci rotation coefficients, used by christof()
-       yesp()
-
-26.2.11 Changes
----------------
-
-In November, 2004, the 'ctensor' package was extensively rewritten.
-Many functions and variables have been renamed in order to make the
-package compatible with the commercial version of Macsyma.
-
-       New Name     Old Name        Description
-       ---------------------------------------------------------------------
-       ctaylor()    DLGTAYLOR()     Taylor-series expansion of an expression
-       lgeod[]      EM              Geodesic equations
-       ein[]        G[]             Mixed Einstein-tensor
-       ric[]        LR[]            Mixed Ricci-tensor
-       ricci()      LRICCICOM()     Compute the mixed Ricci-tensor
-       ctaypov      MINP            Maximum power in Taylor-series expansion
-       cgeodesic()  MOTION          Compute geodesic equations
-       ct_coords    OMEGA           Metric coordinates
-       ctayvar      PARAM           Taylor-series expansion variable
-       lriem[]      R[]             Covariant Riemann-tensor
-       uriemann()   RAISERIEMANN()  Compute the contravariant Riemann-tensor
-       ratriemann   RATRIEMAN       Rational simplif. of the Riemann-tensor
-       uric[]       RICCI[]         Contravariant Ricci-tensor
-       uricci()     RICCICOM()      Compute the contravariant Ricci-tensor
-       cmetric()    SETMETRIC()     Set up the metric
-       ctaypt       TAYPT           Point for Taylor-series expansion
-       ctayswitch   TAYSWITCH       Taylor-series setting switch
-       csetup()     TSETUP()        Start interactive setup session
-       ctransform() TTRANSFORM()    Interactive coordinate transformation
-       uriem[]      UR[]            Contravariant Riemann-tensor
-       weyl[]       W[]             (3,1) Weyl-tensor
 

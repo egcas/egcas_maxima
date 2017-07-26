@@ -187,11 +187,15 @@ Examples:
 @c at (%, [x = 0, y = 1]);
 @c ===end===
 @example
+@group
 (%i1) atvalue (f(x,y), [x = 0, y = 1], a^2);
                                 2
 (%o1)                          a
+@end group
+@group
 (%i2) atvalue ('diff (f(x,y), x), x = 0, 1 + y);
 (%o2)                        @@2 + 1
+@end group
 (%i3) printprops (all, atvalue);
                                 !
                   d             !
@@ -203,19 +207,63 @@ Examples:
                           f(0, 1) = a
 
 (%o3)                         done
+@group
 (%i4) diff (4*f(x, y)^2 - u(x, y)^2, x);
                   d                          d
 (%o4)  8 f(x, y) (-- (f(x, y))) - 2 u(x, y) (-- (u(x, y)))
                   dx                         dx
-(%i5) at (%, [x = 0, y = 1]);
+@end group
 @group
-                                         !
-              2              d           !
-(%o5)     16 a  - 2 u(0, 1) (-- (u(x, y))!            )
-                             dx          !
-                                         !x = 0, y = 1
+(%i5) at (%, [x = 0, y = 1]);
+                                            !
+                 2              d           !
+(%o5)        16 a  - 2 u(0, 1) (-- (u(x, 1))!     )
+                                dx          !
+                                            !x = 0
 @end group
 @end example
+
+Note that in the last line @code{y} is treated differently to @code{x}
+as @code{y} isn't used as a differentiation variable.
+
+The difference between @mrefcomma{subst} @mref{at} and @mref{ev} can be
+seen in the following example:
+
+@c ===beg===
+@c e1:I(t)=C*diff(U(t),t)$
+@c e2:U(t)=L*diff(I(t),t)$
+@c at(e1,e2);
+@c subst(e2,e1);
+@c ev(e1,e2,diff);
+@c ===end===
+@example
+(%i1) e1:I(t)=C*diff(U(t),t)$
+(%i2) e2:U(t)=L*diff(I(t),t)$
+@group
+(%i3) at(e1,e2);
+                               !
+                      d        !
+(%o3)       I(t) = C (-- (U(t))!                    )
+                      dt       !          d
+                               !U(t) = L (-- (I(t)))
+                                          dt
+@end group
+@group
+(%i4) subst(e2,e1);
+                            d      d
+(%o4)             I(t) = C (-- (L (-- (I(t)))))
+                            dt     dt
+@end group
+@group
+(%i5) ev(e1,e2,diff);
+                                  2
+                                 d
+(%o5)                I(t) = C L (--- (I(t)))
+                                   2
+                                 dt
+@end group
+@end example
+
 
 @opencatbox
 @category{Evaluation} @category{Differential equations}
@@ -273,20 +321,27 @@ variables @var{x_1}, @var{x_2}, @dots{} when atvalues are displayed.
 @code{atvalue} evaluates its arguments.
 @code{atvalue} returns @var{c}, the atvalue.
 
+See also @mrefdot{at}
+
 Examples:
 
-@c FOLLOWING ADAPTED FROM example (atvalue)
+@c ===beg===
 @c atvalue (f(x,y), [x = 0, y = 1], a^2);
 @c atvalue ('diff (f(x,y), x), x = 0, 1 + y);
 @c printprops (all, atvalue);
 @c diff (4*f(x,y)^2 - u(x,y)^2, x);
 @c at (%, [x = 0, y = 1]);
+@c ===end===
 @example
+@group
 (%i1) atvalue (f(x,y), [x = 0, y = 1], a^2);
                                 2
 (%o1)                          a
+@end group
+@group
 (%i2) atvalue ('diff (f(x,y), x), x = 0, 1 + y);
 (%o2)                        @@2 + 1
+@end group
 (%i3) printprops (all, atvalue);
                                 !
                   d             !
@@ -298,16 +353,20 @@ Examples:
                           f(0, 1) = a
 
 (%o3)                         done
+@group
 (%i4) diff (4*f(x,y)^2 - u(x,y)^2, x);
                   d                          d
 (%o4)  8 f(x, y) (-- (f(x, y))) - 2 u(x, y) (-- (u(x, y)))
                   dx                         dx
+@end group
+@group
 (%i5) at (%, [x = 0, y = 1]);
-                                         !
-              2              d           !
-(%o5)     16 a  - 2 u(0, 1) (-- (u(x, y))!            )
-                             dx          !
-                                         !x = 0, y = 1
+                                            !
+                 2              d           !
+(%o5)        16 a  - 2 u(0, 1) (-- (u(x, 1))!     )
+                                dx          !
+                                            !x = 0
+@end group
 @end example
 
 @opencatbox
@@ -428,23 +487,39 @@ See also @mref{depends} and @mrefdot{gradef}
 @c dependencies;
 @c ===end===
 @example
-(%i1) dependencies;                                
+@group
+(%i1) dependencies;
 (%o1)                          []
+@end group
+@group
 (%i2) depends (foo, [bar, baz]);
 (%o2)                    [foo(bar, baz)]
+@end group
+@group
 (%i3) depends ([g, h], [a, b, c]);
 (%o3)               [g(a, b, c), h(a, b, c)]
+@end group
+@group
 (%i4) dependencies;
 (%o4)        [foo(bar, baz), g(a, b, c), h(a, b, c)]
+@end group
+@group
 (%i5) dependencies (quux (x, y), mumble (u));
 (%o5)                [quux(x, y), mumble(u)]
+@end group
+@group
 (%i6) dependencies;
 (%o6) [foo(bar, baz), g(a, b, c), h(a, b, c), quux(x, y), 
                                                        mumble(u)]
+@end group
+@group
 (%i7) remove (quux, dependency);
 (%o7)                         done
+@end group
+@group
 (%i8) dependencies;
 (%o8)  [foo(bar, baz), g(a, b, c), h(a, b, c), mumble(u)]
+@end group
 @end example
 
 @opencatbox

@@ -120,20 +120,16 @@
   a floating-point value or if numer is true.  If the result is
   non-NIL, it is a list of the arguments reduced via rectform"
   (let (flag values)
-    (flet ((unrat (x)
-	     (if (ratnump x)
-		 (/ (second x) (third x))
-		 x)))
-      (dolist (ll args)
-	(destructuring-bind (rll . ill)
-	    (trisplit ll)
-	  (unless (and (float-or-rational-p rll)
-		       (float-or-rational-p ill))
-	    (return-from complex-float-numerical-eval-p nil))
-	  ;; Always save the result from trisplit.  But for backward
-	  ;; compatibility, only set the flag if any item is a float.
-	  (push (add rll (mul ill '$%i)) values)
-	  (setf flag (or flag (or (floatp rll) (floatp ill)))))))
+    (dolist (ll args)
+      (destructuring-bind (rll . ill)
+          (trisplit ll)
+        (unless (and (float-or-rational-p rll)
+                     (float-or-rational-p ill))
+          (return-from complex-float-numerical-eval-p nil))
+        ;; Always save the result from trisplit.  But for backward
+        ;; compatibility, only set the flag if any item is a float.
+        (push (add rll (mul ill '$%i)) values)
+        (setf flag (or flag (or (floatp rll) (floatp ill))))))
     (when (or $numer flag)
       ;; Return the values in the same order as the args!
       (nreverse values))))
@@ -481,6 +477,48 @@
     (t
      ;; All other cases are handled by the simplifier of the function.
      (simplify (list '(%gamma_incomplete) a z))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun $gamma_greek (a z)
+  (simplify (list '(%gamma_greek) a z)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defprop $gamma_greek %gamma_greek alias)
+(defprop $gamma_greek %gamma_greek verb)
+
+(defprop %gamma_greek $gamma_greek reversealias)
+(defprop %gamma_greek $gamma_greek noun)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defprop %gamma_greek simp-gamma-greek operators)
+
+;;; distribute over bags (aggregates)
+
+(defprop %gamma_greek (mlist $matrix mequal) distribute_over)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (defprop %gamma_greek ??? grad) WHAT TO PUT HERE ??
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun simp-gamma-greek (expr ignored simpflag)
+  (declare (ignore ignored))
+  (twoargcheck expr)
+  (let ((a (simpcheck (cadr expr) simpflag))
+        (z (simpcheck (caddr expr) simpflag)))
+    (cond
+      ((or
+         (float-numerical-eval-p a z)
+         (complex-float-numerical-eval-p a z)
+         (bigfloat-numerical-eval-p a z)
+         (complex-bigfloat-numerical-eval-p a z))
+       (take '(%gamma_incomplete_generalized) a 0 z))
+      (t
+        (gammagreek a z)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2147,7 +2185,9 @@
     #+gcl (load eval)
     #-gcl (:load-toplevel :execute)
     (let (($context '$global) (context '$global))
-      (meval '(($declare) %erf_generalized $antisymmetric))))
+      (meval '(($declare) %erf_generalized $antisymmetric))
+      ;; Let's remove built-in symbols from list for user-defined properties.
+      (setq $props (remove '%erf_generalized $props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2916,7 +2956,9 @@
 ;    #+gcl (load eval)
 ;    #-gcl (:load-toplevel :execute)
 ;    (let (($context '$global) (context '$global))
-;      (meval '(($declare) %fresnel_s $oddfun))))
+;      (meval '(($declare) %fresnel_s $oddfun))
+;      ;; Let's remove built-in symbols from list for user-defined properties.
+;      (setq $props (remove '%fresnel_s $props))))
 
 (defprop %fresnel_s odd-function-reflect reflection-rule)
 
@@ -3227,7 +3269,9 @@
     #+gcl (load eval)
     #-gcl (:load-toplevel :execute)
     (let (($context '$global) (context '$global))
-      (meval '(($declare) $beta $symmetric))))
+      (meval '(($declare) $beta $symmetric))
+      ;; Let's remove built-in symbols from list for user-defined properties.
+      (setq $props (remove '$beta $props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

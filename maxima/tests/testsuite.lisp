@@ -10,7 +10,7 @@
         "rtest_rules"
         "rtestnset" 
         ((mlist) "rtest1" 180 182 183)
-        "rtest1a"
+        ((mlist) "rtest1a" 33)
         ((mlist) "rtest2" 86 95)
 	"rtest4"
         ;; Mark tests that require the documentation as known failures
@@ -23,7 +23,7 @@
         "rtest9" 
         "rtest9a"
         ((mlist simp) "rtest10" 24 25)
-        ((mlist) "rtest11" #+(or gcl cmucl ccl64) 137)
+        ((mlist) "rtest11" #+(or gcl cmucl ccl64) 144 #+(or gcl cmucl ccl64) 160 #+gcl 161)
         "rtest13" "rtest13s"
         "rtest14"
         "rtest15"

@@ -11,7 +11,7 @@
 
 
 @c start of header
-@settitle Maxima 5.39.0 Manual
+@settitle Maxima 5.40.0 Manual
 
 @synindex ky fn
 @synindex vr fn
@@ -58,7 +58,7 @@ END-INFO-DIR-ENTRY
 @sp 10
 @comment The title is printed in a large font.
 @center @titlefont{Maxima Manual}
-@center Version 5.39.0
+@center Version 5.40.0
 @page
 @vskip 0pt plus 1filll
 Maxima is a computer algebra system, implemented in Lisp.

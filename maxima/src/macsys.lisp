@@ -188,6 +188,7 @@ DESTINATION is an actual stream (rather than nil for a string)."
 	 (c-tag)
 	 (d-tag))
 	(nil)
+      (declare (ignorable area-before area-after))
       (catch 'return-from-debugger
 	(when (or (not (checklabel $inchar))
 		  (not (checklabel $outchar)))
@@ -279,9 +280,9 @@ DESTINATION is an actual stream (rather than nil for a string)."
           (princ (break-prompt))
           (force-output)
 	  (let (quitting)
-	    (do ((char)) (nil)
+	    (loop
 	      ;;those are common lisp characters you're reading here
-	      (case (setq char (read-char *terminal-io*))
+	      (case (read-char *terminal-io*)
                 ((#\page)
                  (fresh-line)
                  (princ (break-prompt))
@@ -523,7 +524,7 @@ DESTINATION is an actual stream (rather than nil for a string)."
 
 (defmfun $appendfile (name)
   (if (and (symbolp name)
-	   (member (char (symbol-name name) 0) '(#\$) :test #'char=))
+	   (char= (char (symbol-name name) 0) #\$))
       (setq name (maxima-string name)))
   (if $appendfile (merror (intl:gettext "appendfile: already in appendfile, you must call closefile first.")))
   (let ((stream  (open name :direction :output
@@ -537,7 +538,7 @@ DESTINATION is an actual stream (rather than nil for a string)."
 	  *terminal-io* $appendfile)
     (multiple-value-bind (sec min hour day month year)
 	(get-decoded-time)
-      (format t (intl:gettext "~&/* Starts dribbling to ~A (~d/~d/~d, ~d:~d:~d).*/~&")
+      (format t (intl:gettext "~&/* Starts dribbling to ~A (~d/~d/~d, ~2,'0d:~2,'0d:~2,'0d).*/~&")
 	      name year month day hour min sec))
     '$done))
 
@@ -607,6 +608,7 @@ DESTINATION is an actual stream (rather than nil for a string)."
 	shell shell-opt)
     #+(or gcl ecl lispworks)
     (declare (ignore s))
+    (declare (ignorable shell shell-opt))
 
     (cond ((string= *autoconf-windows* "true")
 	   (setf shell "cmd") (setf shell-opt "/c"))

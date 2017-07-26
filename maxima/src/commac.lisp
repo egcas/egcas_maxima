@@ -670,8 +670,10 @@ values")
       ;; timezone offset has only minutes and seconds.
       (if (/= (mod tz 1/60) 0)
         ($timedate time-integer (/ (round (- tz) 1/60) 60))
-        (let
-          ((tz-offset (if dst-p (- 1 tz) (- tz))))
+        (let ((tz-offset
+	       #-gcl (if dst-p (- 1 tz) (- tz))
+	       #+gcl (- tz)	; bug in gcl https://savannah.gnu.org/bugs/?50570
+	       ))
           (multiple-value-bind
             (tz-hours tz-hour-fraction)
             (truncate tz-offset)
@@ -741,7 +743,7 @@ values")
         (if (> (length s) 0)
           (return-from $parse_timedate nil))))
 
-    (construct-universal-time year month day hours minutes seconds seconds-fraction (if tz (- tz)))))
+    (encode-time-with-all-parts year month day hours minutes seconds seconds-fraction (if tz (- tz)))))
 
 (defun extract-groups-integers (s)
   (let ((groups (coerce (subseq maxima-nregex::*regex-groups* 1 maxima-nregex::*regex-groupings*) 'list)))
@@ -763,13 +765,61 @@ values")
 
 (if (and (string= (lisp-implementation-type) "CLISP") (string= *autoconf-windows* "true"))
   ; Clisp/Windows case:
-  (defun construct-universal-time (year month day &optional (hours 0) (minutes 0) (seconds 0) (seconds-fraction 0) tz)
-    (add seconds-fraction (sub (encode-universal-time seconds minutes hours day month (add year 400) tz) 12622780800)))
+  (defun encode-time-with-all-parts (year month day hours minutes seconds-integer seconds-fraction tz)
+    (add seconds-fraction
+         ;; Some Lisps allow TZ to be null but CLHS doesn't explicitly allow it,
+         ;; so work around null TZ here.
+         (let
+           ((foo
+              (if tz
+                (encode-universal-time seconds-integer minutes hours day month (add year 400) tz)
+                (encode-universal-time seconds-integer minutes hours day month (add year 400)))))
+           (sub foo 12622780800))))
   ; other Lisp / OS versions:
-  (defun construct-universal-time (year month day &optional (hours 0) (minutes 0) (seconds 0) (seconds-fraction 0) tz)
-    (add seconds-fraction (encode-universal-time seconds minutes hours day month year tz)))
-)
+  (defun encode-time-with-all-parts (year month day hours minutes seconds-integer seconds-fraction tz)
+    (add seconds-fraction
+         ;; Some Lisps allow TZ to be null but CLHS doesn't explicitly allow it,
+         ;; so work around null TZ here.
+         (if tz
+           (encode-universal-time seconds-integer minutes hours day month year tz)
+           (encode-universal-time seconds-integer minutes hours day month year)))))
 
+(defun $encode_time (year month day hours minutes seconds &optional tz-offset)
+    (when tz-offset
+      (setq tz-offset (sub 0 tz-offset))
+      (cond
+        ((and (consp tz-offset) (eq (caar tz-offset) 'rat))
+         (setq tz-offset (/ (second tz-offset) (third tz-offset))))
+        ((floatp tz-offset)
+         (setq tz-offset (rationalize tz-offset))))
+      (setq tz-offset (/ (round tz-offset 1/3600) 3600)))
+      (let*
+        ((seconds-integer (mfuncall '$floor seconds))
+         (seconds-fraction (sub seconds seconds-integer)))
+        (encode-time-with-all-parts year month day hours minutes seconds-integer seconds-fraction tz-offset)))
+
+(defun $decode_time (seconds &optional tz)
+  (cond
+    ((and (consp tz) (eq (caar tz) 'rat))
+     (setq tz (/ (second tz) (third tz))))
+    ((floatp tz)
+     (setq tz (rationalize tz))))
+  (if tz (setq tz (/ (round tz 1/3600) 3600)))
+  (let*
+    ((seconds-integer (mfuncall '$floor seconds))
+     (seconds-fraction (sub seconds seconds-integer)))
+    (multiple-value-bind
+      (seconds minutes hours day month year day-of-week dst-p tz)
+      ;; Some Lisps allow TZ to be null but CLHS doesn't explicitly allow it,
+      ;; so work around null TZ here.
+      (if tz (decode-universal-time seconds-integer (- tz))
+        (decode-universal-time seconds-integer))
+      ;; HMM, CAN DECODE-UNIVERSAL-TIME RETURN TZ = NIL ??
+      (let
+        ((tz-offset
+           #-gcl (if dst-p (- 1 tz) (- tz))
+           #+gcl (- tz)))  ; bug in gcl https://savannah.gnu.org/bugs/?50570
+        (list '(mlist) year month day hours minutes (add seconds seconds-fraction) ($ratsimp tz-offset))))))
 
 ;;Some systems make everything functionp including macros:
 (defun functionp (x)

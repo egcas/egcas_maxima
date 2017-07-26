@@ -24,8 +24,8 @@ Imaxima
 Imaxima is a package for displaying the output from the computer algebra
 system Maxima as images typeset by TeX.
 
-This manual documents imaxima version 5.39.0_1_gf981056.  You can
-download the latest version of imaxima from
+This manual documents imaxima version 5.40.0.  You can download the
+latest version of imaxima from
 <http://members3.jcom.home.ne.jp/imaxima/>.
 
 Since version 1.0b, imaxima and imath supports inline graph.
@@ -482,14 +482,14 @@ File: imaxima.info,  Node: Index,  Prev: Imath minor mode,  Up: Top
 
 Tag Table:
 Node: Top530
-Node: Installation1299
-Node: Usage3323
-Node: Inline Graph5765
-Node: Options7300
-Node: Appearance7705
-Node: Line Breaking9392
-Node: Miscellaneous10745
-Node: Imath minor mode13019
-Node: Index15270
+Node: Installation1288
+Node: Usage3312
+Node: Inline Graph5754
+Node: Options7289
+Node: Appearance7694
+Node: Line Breaking9381
+Node: Miscellaneous10734
+Node: Imath minor mode13008
+Node: Index15259
 
 End Tag Table

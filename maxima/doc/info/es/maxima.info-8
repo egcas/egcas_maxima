@@ -1,217 +1,6 @@
 This is maxima.info, produced by makeinfo version 5.1 from maxima.texi.
 
 
-File: maxima.info,  Node: Funciones y variables para polinomios ortogonales,  Prev: Introducción a polinomios ortogonales,  Up: orthopoly
-
-69.2 Funciones y variables para polinomios ortogonales
-======================================================
-
- -- Función: assoc_legendre_p (<n>, <m>, <x>)
-     Función asociada de Legendre de primera especie de grado <n> y
-     orden <m>.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 22.5.37, página 779,
-     8.6.6 (segunda ecuación), página 334 y 8.2.5, página 333.
-
- -- Función: assoc_legendre_q (<n>, <m>, <x>)
-     Función asociada de Legendre de segunda especie de grado <n> y
-     orden <m>.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 8.5.3 y 8.1.8.
-
- -- Función: chebyshev_t (<n>, <x>)
-     Función de Chebyshev de primera especie.
-
-     Referencia: Abramowitz y Stegun, ecuación 22.5.47, página 779.
-
- -- Función: chebyshev_u (<n>, <x>)
-     Función de Chebyshev de segunda especie.
-
-     Referencia: Abramowitz y Stegun, ecuación 22.5.48, página 779.
-
- -- Función: gen_laguerre (<n>, <a>, <x>)
-     Polinomio de Laguerre generalizado de grado <n>.
-
-     Referencia: Abramowitz y Stegun, ecuación 22.5.54, página 780.
-
- -- Función: hermite (<n>, <x>)
-     Polinomio de Hermite.
-
-     Referencia: Abramowitz y Stegun, ecuación 22.5.55, página 780.
-
- -- Función: intervalp (<e>)
-     Devuelve 'true' si la entrada es un intervalo y 'false' en caso
-     contrario.
-
- -- Función: jacobi_p (<n>, <a>, <b>, <x>)
-     Polinomio de Jacobi.
-
-     Los polinomios de Jacobi están definidos para todo <a> y <b>; sin
-     embargo, el peso '(1 - <x>)^<a> (1 + <x>)^<b>' no es integrable
-     para '<a> <= -1' o '<b> <= -1'.
-
-     Referencia: Abramowitz y Stegun, ecuación 22.5.42, página 779.
-
- -- Función: laguerre (<n>, <x>)
-     Polinomio de Laguerre.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 22.5.16 y 22.5.54,
-     página 780.
-
- -- Función: legendre_p (<n>, <x>)
-     Polinomio de Legendre de primera especie.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 22.5.50 y 22.5.51,
-     página 779.
-
- -- Función: legendre_q (<n>, <x>)
-     Polinomio de Legendre de segunda especie.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 8.5.3 y 8.1.8.
-
- -- Función: orthopoly_recur (<f>, <args>)
-     Devuelve una relación recursiva para la familia de funciones
-     ortogonales <f> con argumentos <args>.  La recursión se hace con
-     respecto al grado del polinomio.
-
-          (%i1) orthopoly_recur (legendre_p, [n, x]);
-                              (2 n + 1) P (x) x - n P     (x)
-                                         n           n - 1
-          (%o1)   P     (x) = -------------------------------
-                   n + 1                   n + 1
-
-     El segundo argumento de 'orthopoly_recur' debe ser una lista con el
-     número correcto de argumentos para la función <f>; si no lo es,
-     Maxima emite un mensaje de error.
-
-          (%i1) orthopoly_recur (jacobi_p, [n, x]);
-
-          Function jacobi_p needs 4 arguments, instead it received 2
-           -- an error.  Quitting.  To debug this try debugmode(true);
-
-     Además, si <f> no es el nombre de ninguna de las familias de
-     polinomios ortogonales, se emite otro mensaje de error.
-
-          (%i1) orthopoly_recur (foo, [n, x]);
-
-          A recursion relation for foo isn't known to Maxima
-           -- an error.  Quitting.  To debug this try debugmode(true);
-
- -- Variable opcional: orthopoly_returns_intervals
-     Valor por defecto: 'true'
-
-     Si 'orthopoly_returns_intervals' vale 'true', los números decimales
-     en coma flotante se retornan con el formato 'interval (<c>, <r>)',
-     donde <c> es el centro del intervalo y <r> su radio.  El centro
-     puede ser un número complejo, en cuyo caso el intervalo es un disco
-     en el plano complejo.
-
- -- Función: orthopoly_weight (<f>, <args>)
-
-     Devuelve una lista con tres elementos; el primer elemento es la
-     fórmula del peso para la familia de polinomios ortogonales <f> con
-     los argumentos dados por la lista <args>; el segundo y tercer
-     elementos son los extremos inferior y superior del intervalo de
-     ortogonalidad.  Por ejemplo,
-
-          (%i1) w : orthopoly_weight (hermite, [n, x]);
-                                      2
-                                   - x
-          (%o1)                 [%e    , - inf, inf]
-          (%i2) integrate (w[1] * hermite (3, x) * hermite (2, x), x, w[2], w[3]);
-          (%o2)                           0
-
-     La variable principal de <f> debe ser un símbolo, en caso contrario
-     Maxima emite un mensaje de error.
-
- -- Función: pochhammer (<n>, <x>)
-     Símbolo de Pochhammer.  Para enteros no negativos <n> con '<n> <=
-     pochhammer_max_index', la expresión 'pochhammer (<x>, <n>)' se
-     evalúa como el producto '<x> (<x> + 1) (<x> + 2) ... (<x> + n - 1)'
-     si '<n> > 0' y como 1 si '<n> = 0'.  Para <n> negativo, 'pochhammer
-     (<x>, <n>)' se define como '(-1)^<n> / pochhammer (1 - <x>, -<n>)'.
-     Así por ejemplo,
-
-          (%i1) pochhammer (x, 3);
-          (%o1)                   x (x + 1) (x + 2)
-          (%i2) pochhammer (x, -3);
-                                           1
-          (%o2)               - -----------------------
-                                (1 - x) (2 - x) (3 - x)
-
-     A fin de convertir el símbolo de Pochhammer en un cociente de
-     funciones gamma (véase Abramowitz y Stegun, ecuación 6.1.22),
-     hágase uso de 'makegamma'.  Por ejemplo,
-
-          (%i1) makegamma (pochhammer (x, n));
-                                    gamma(x + n)
-          (%o1)                     ------------
-                                      gamma(x)
-
-     Si <n> es mayor que 'pochhammer_max_index' o si <n> es simbólico,
-     'pochhammer' devuelve una forma nominal.
-
-          (%i1) pochhammer (x, n);
-          (%o1)                         (x)
-                                           n
-
- -- Variable opcional: pochhammer_max_index
-     Valor por defecto: 100
-
-     'pochhammer (<n>, <x>)' se evalúa como un producto si y sólo si
-     '<n> <= pochhammer_max_index'.
-
-     Ejemplos:
-
-          (%i1) pochhammer (x, 3), pochhammer_max_index : 3;
-          (%o1)                   x (x + 1) (x + 2)
-          (%i2) pochhammer (x, 4), pochhammer_max_index : 3;
-          (%o2)                         (x)
-                                           4
-
-     Referencia: Abramowitz y Stegun, ecuación 6.1.16, página 256.
-
- -- Función: spherical_bessel_j (<n>, <x>)
-     Función de Bessel esférica de primera especie.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 10.1.8, página 437 y
-     10.1.15, página 439.
-
- -- Función: spherical_bessel_y (<n>, <x>)
-     Función de Bessel esférica de segunda especie.
-
-     Referencia: Abramowitz y Stegun, ecuaciones 10.1.9, página 437 y
-     10.1.15, página 439.
-
- -- Función: spherical_hankel1 (<n>, <x>)
-     Función esférica de Hankel de primera especie.
-
-     Referencia: Abramowitz y Stegun, ecuación 10.1.36, página 439.
-
- -- Función: spherical_hankel2 (<n>, <x>)
-     Función esférica de Hankel de segunda especie.
-
-     Referencia: Abramowitz y Stegun, ecuación 10.1.17, página 439.
-
- -- Función: spherical_harmonic (<n>, <m>, <x>, <y>)
-     Función armónica esférica.
-
-     Referencia: Merzbacher 9.64.
-
- -- Función: unit_step (<x>)
-     Función de escalón unidad continua por la izquierda, definida de
-     tal forma que 'unit_step (<x>)' se anula para '<x> <= 0' y es igual
-     a 1 para '<x> > 0'.
-
-     En caso de ser necesaria una función escalón unidad que tome el
-     valor 1/2 en el origen, utilícese '(1 + signum (<x>))/2'.
-
- -- Función: ultraspherical (<n>, <a>, <x>)
-     Polinomio ultraesférico o de Gegenbauer.
-
-     Referencia: Abramowitz y Stegun, ecuación 22.5.46, página 779.
-
-
 File: maxima.info,  Node: romberg,  Next: simplex,  Prev: orthopoly,  Up: Top
 
 70 romberg
@@ -5690,61 +5479,65 @@ Appendix A Índice de Funciones y Variables
 * cbtics:                                Funciones y variables para draw.
                                                              (line  413)
 * cdf_bernoulli:                         Funciones y variables para distribuciones discretas.
-                                                             (line  232)
+                                                             (line  228)
 * cdf_beta:                              Funciones y variables para distribuciones continuas.
-                                                             (line  833)
+                                                             (line  723)
 * cdf_binomial:                          Funciones y variables para distribuciones discretas.
                                                              (line  102)
 * cdf_cauchy:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1329)
+                                                             (line 1163)
 * cdf_chi2:                              Funciones y variables para distribuciones continuas.
-                                                             (line  283)
+                                                             (line  271)
 * cdf_continuous_uniform:                Funciones y variables para distribuciones continuas.
-                                                             (line  892)
+                                                             (line  782)
 * cdf_discrete_uniform:                  Funciones y variables para distribuciones discretas.
-                                                             (line  390)
+                                                             (line  364)
+* cdf_empirical:                         Funciones y variables de parámetros descriptivos.
+                                                             (line  518)
+* cdf_empirical <1>:                     Funciones y variables de parámetros descriptivos.
+                                                             (line  519)
 * cdf_exp:                               Funciones y variables para distribuciones continuas.
-                                                             (line  562)
+                                                             (line  497)
 * cdf_f:                                 Funciones y variables para distribuciones continuas.
-                                                             (line  474)
+                                                             (line  420)
 * cdf_gamma:                             Funciones y variables para distribuciones continuas.
-                                                             (line  768)
+                                                             (line  658)
 * cdf_general_finite_discrete:           Funciones y variables para distribuciones discretas.
                                                              (line   24)
 * cdf_geometric:                         Funciones y variables para distribuciones discretas.
-                                                             (line  338)
+                                                             (line  311)
 * cdf_gumbel:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1355)
+                                                             (line 1189)
 * cdf_hypergeometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  451)
+                                                             (line  425)
 * cdf_laplace:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1278)
+                                                             (line 1112)
 * cdf_logistic:                          Funciones y variables para distribuciones continuas.
-                                                             (line  947)
+                                                             (line  837)
 * cdf_lognormal:                         Funciones y variables para distribuciones continuas.
-                                                             (line  705)
+                                                             (line  595)
 * cdf_negative_binomial:                 Funciones y variables para distribuciones discretas.
-                                                             (line  509)
+                                                             (line  483)
 * cdf_noncentral_chi2:                   Funciones y variables para distribuciones continuas.
-                                                             (line  419)
+                                                             (line  366)
 * cdf_noncentral_student_t:              Funciones y variables para distribuciones continuas.
                                                              (line  176)
 * cdf_normal:                            Funciones y variables para distribuciones continuas.
                                                              (line   11)
 * cdf_pareto:                            Funciones y variables para distribuciones continuas.
-                                                             (line  998)
+                                                             (line  888)
 * cdf_poisson:                           Funciones y variables para distribuciones discretas.
                                                              (line  164)
 * cdf_rank_sum:                          Funciones y variables para distribuciones especiales.
                                                              (line   27)
 * cdf_rayleigh:                          Funciones y variables para distribuciones continuas.
-                                                             (line 1114)
+                                                             (line  997)
 * cdf_signed_rank:                       Funciones y variables para distribuciones especiales.
                                                              (line   13)
 * cdf_student_t:                         Funciones y variables para distribuciones continuas.
                                                              (line   82)
 * cdf_weibull:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1049)
+                                                             (line  939)
 * cdisplay:                              Funciones y variables para ctensor.
                                                              (line  784)
 * ceiling:                               Funciones para los números.
@@ -5985,9 +5778,9 @@ Appendix A Índice de Funciones y Variables
 * copy_graph:                            Funciones y variables para graphs.
                                                              (line   72)
 * cor:                                   Funciones y variables de parámetros descriptivos.
-                                                             (line  582)
+                                                             (line  653)
 * cor <1>:                               Funciones y variables de parámetros descriptivos.
-                                                             (line  583)
+                                                             (line  654)
 * cos:                                   Funciones y variables para trigonometría.
                                                              (line  130)
 * cosh:                                  Funciones y variables para trigonometría.
@@ -5999,9 +5792,9 @@ Appendix A Índice de Funciones y Variables
 * coth:                                  Funciones y variables para trigonometría.
                                                              (line  139)
 * cov:                                   Funciones y variables de parámetros descriptivos.
-                                                             (line  477)
+                                                             (line  548)
 * cov1:                                  Funciones y variables de parámetros descriptivos.
-                                                             (line  508)
+                                                             (line  579)
 * covdiff:                               Funciones y variables para itensor.
                                                              (line  931)
 * covect:                                Funciones y variables para las matrices y el álgebra lineal.
@@ -6963,9 +6756,9 @@ Appendix A Índice de Funciones y Variables
 * globalsolve:                           Funciones y variable para las ecuaciones.
                                                              (line  351)
 * global_variances:                      Funciones y variables de parámetros descriptivos.
-                                                             (line  539)
+                                                             (line  610)
 * global_variances <1>:                  Funciones y variables de parámetros descriptivos.
-                                                             (line  540)
+                                                             (line  611)
 * gnuplot_close:                         Funciones para el formato Gnuplot_pipes.
                                                              (line   12)
 * gnuplot_curve_styles:                  Opciones para Gnuplot.
@@ -7490,6 +7283,10 @@ Appendix A Índice de Funciones y Variables
                                                              (line  347)
 * kinvariant:                            Funciones y variables para ctensor.
                                                              (line 1157)
+* km:                                    Funciones y variables de parámetros descriptivos.
+                                                             (line  477)
+* km <1>:                                Funciones y variables de parámetros descriptivos.
+                                                             (line  478)
 * kostka:                                Funciones y variables para simetrías.
                                                              (line  217)
 * kronecker_product:                     Funciones y variables para linearalgebra.
@@ -7507,53 +7304,53 @@ Appendix A Índice de Funciones y Variables
 * kurtosis <1>:                          Funciones y variables de parámetros descriptivos.
                                                              (line  383)
 * kurtosis_bernoulli:                    Funciones y variables para distribuciones discretas.
-                                                             (line  305)
+                                                             (line  282)
 * kurtosis_beta:                         Funciones y variables para distribuciones continuas.
-                                                             (line  870)
+                                                             (line  760)
 * kurtosis_binomial:                     Funciones y variables para distribuciones discretas.
                                                              (line  142)
 * kurtosis_chi2:                         Funciones y variables para distribuciones continuas.
-                                                             (line  383)
+                                                             (line  337)
 * kurtosis_continuous_uniform:           Funciones y variables para distribuciones continuas.
-                                                             (line  925)
+                                                             (line  815)
 * kurtosis_discrete_uniform:             Funciones y variables para distribuciones discretas.
-                                                             (line  423)
+                                                             (line  397)
 * kurtosis_exp:                          Funciones y variables para distribuciones continuas.
-                                                             (line  673)
+                                                             (line  570)
 * kurtosis_f:                            Funciones y variables para distribuciones continuas.
-                                                             (line  522)
+                                                             (line  464)
 * kurtosis_gamma:                        Funciones y variables para distribuciones continuas.
-                                                             (line  805)
+                                                             (line  695)
 * kurtosis_general_finite_discrete:      Funciones y variables para distribuciones discretas.
                                                              (line   75)
 * kurtosis_geometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  369)
+                                                             (line  343)
 * kurtosis_gumbel:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1400)
+                                                             (line 1233)
 * kurtosis_laplace:                      Funciones y variables para distribuciones continuas.
-                                                             (line 1309)
+                                                             (line 1143)
 * kurtosis_logistic:                     Funciones y variables para distribuciones continuas.
-                                                             (line  978)
+                                                             (line  868)
 * kurtosis_lognormal:                    Funciones y variables para distribuciones continuas.
-                                                             (line  747)
+                                                             (line  637)
 * kurtosis_negative_binomial:            Funciones y variables para distribuciones discretas.
-                                                             (line  549)
+                                                             (line  521)
 * kurtosis_noncentral_chi2:              Funciones y variables para distribuciones continuas.
-                                                             (line  455)
+                                                             (line  401)
 * kurtosis_noncentral_student_t:         Funciones y variables para distribuciones continuas.
-                                                             (line  234)
+                                                             (line  230)
 * kurtosis_normal:                       Funciones y variables para distribuciones continuas.
                                                              (line   60)
 * kurtosis_pareto:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1029)
+                                                             (line  919)
 * kurtosis_poisson:                      Funciones y variables para distribuciones discretas.
                                                              (line  199)
 * kurtosis_rayleigh:                     Funciones y variables para distribuciones continuas.
-                                                             (line 1239)
+                                                             (line 1080)
 * kurtosis_student_t:                    Funciones y variables para distribuciones continuas.
                                                              (line  127)
 * kurtosis_weibull:                      Funciones y variables para distribuciones continuas.
-                                                             (line 1080)
+                                                             (line  970)
 * label:                                 Funciones y variables para draw.
                                                              (line 3156)
 * label <1>:                             Funciones y variables para draw.
@@ -7728,9 +7525,9 @@ Appendix A Índice de Funciones y Variables
 * listp <2>:                             Funciones y variables para linearalgebra.
                                                              (line  267)
 * list_correlations:                     Funciones y variables de parámetros descriptivos.
-                                                             (line  630)
+                                                             (line  701)
 * list_correlations <1>:                 Funciones y variables de parámetros descriptivos.
-                                                             (line  631)
+                                                             (line  702)
 * list_matrix_entries:                   Funciones y variables para las matrices y el álgebra lineal.
                                                              (line  674)
 * list_nc_monomials:                     Funciones y variables para Afines.
@@ -8005,59 +7802,59 @@ Appendix A Índice de Funciones y Variables
 * mean <1>:                              Funciones y variables de parámetros descriptivos.
                                                              (line    7)
 * mean_bernoulli:                        Funciones y variables para distribuciones discretas.
-                                                             (line  243)
+                                                             (line  240)
 * mean_beta:                             Funciones y variables para distribuciones continuas.
-                                                             (line  851)
+                                                             (line  741)
 * mean_binomial:                         Funciones y variables para distribuciones discretas.
                                                              (line  122)
 * mean_chi2:                             Funciones y variables para distribuciones continuas.
-                                                             (line  315)
+                                                             (line  296)
 * mean_continuous_uniform:               Funciones y variables para distribuciones continuas.
-                                                             (line  905)
+                                                             (line  795)
 * mean_deviation:                        Funciones y variables de parámetros descriptivos.
                                                              (line  279)
 * mean_deviation <1>:                    Funciones y variables de parámetros descriptivos.
                                                              (line  280)
 * mean_discrete_uniform:                 Funciones y variables para distribuciones discretas.
-                                                             (line  403)
+                                                             (line  377)
 * mean_exp:                              Funciones y variables para distribuciones continuas.
-                                                             (line  598)
+                                                             (line  523)
 * mean_f:                                Funciones y variables para distribuciones continuas.
-                                                             (line  503)
+                                                             (line  445)
 * mean_gamma:                            Funciones y variables para distribuciones continuas.
-                                                             (line  786)
+                                                             (line  676)
 * mean_general_finite_discrete:          Funciones y variables para distribuciones discretas.
                                                              (line   51)
 * mean_geometric:                        Funciones y variables para distribuciones discretas.
-                                                             (line  349)
+                                                             (line  323)
 * mean_gumbel:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1366)
+                                                             (line 1200)
 * mean_hypergeometric:                   Funciones y variables para distribuciones discretas.
-                                                             (line  467)
+                                                             (line  441)
 * mean_laplace:                          Funciones y variables para distribuciones continuas.
-                                                             (line 1289)
+                                                             (line 1123)
 * mean_logistic:                         Funciones y variables para distribuciones continuas.
-                                                             (line  958)
+                                                             (line  848)
 * mean_lognormal:                        Funciones y variables para distribuciones continuas.
-                                                             (line  727)
+                                                             (line  617)
 * mean_negative_binomial:                Funciones y variables para distribuciones discretas.
-                                                             (line  529)
+                                                             (line  501)
 * mean_noncentral_chi2:                  Funciones y variables para distribuciones continuas.
-                                                             (line  435)
+                                                             (line  381)
 * mean_noncentral_student_t:             Funciones y variables para distribuciones continuas.
-                                                             (line  200)
+                                                             (line  196)
 * mean_normal:                           Funciones y variables para distribuciones continuas.
                                                              (line   41)
 * mean_pareto:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1009)
+                                                             (line  899)
 * mean_poisson:                          Funciones y variables para distribuciones discretas.
                                                              (line  180)
 * mean_rayleigh:                         Funciones y variables para distribuciones continuas.
-                                                             (line 1153)
+                                                             (line 1022)
 * mean_student_t:                        Funciones y variables para distribuciones continuas.
                                                              (line  102)
 * mean_weibull:                          Funciones y variables para distribuciones continuas.
-                                                             (line 1060)
+                                                             (line  950)
 * median:                                Funciones y variables de parámetros descriptivos.
                                                              (line  239)
 * median <1>:                            Funciones y variables de parámetros descriptivos.
@@ -8492,59 +8289,59 @@ Appendix A Índice de Funciones y Variables
 * pdf_bernoulli:                         Funciones y variables para distribuciones discretas.
                                                              (line  217)
 * pdf_beta:                              Funciones y variables para distribuciones continuas.
-                                                             (line  828)
+                                                             (line  718)
 * pdf_binomial:                          Funciones y variables para distribuciones discretas.
                                                              (line   96)
 * pdf_cauchy:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1324)
+                                                             (line 1158)
 * pdf_chi2:                              Funciones y variables para distribuciones continuas.
-                                                             (line  261)
+                                                             (line  257)
 * pdf_continuous_uniform:                Funciones y variables para distribuciones continuas.
-                                                             (line  887)
+                                                             (line  777)
 * pdf_discrete_uniform:                  Funciones y variables para distribuciones discretas.
-                                                             (line  384)
+                                                             (line  358)
 * pdf_exp:                               Funciones y variables para distribuciones continuas.
-                                                             (line  544)
+                                                             (line  486)
 * pdf_f:                                 Funciones y variables para distribuciones continuas.
-                                                             (line  469)
+                                                             (line  415)
 * pdf_gamma:                             Funciones y variables para distribuciones continuas.
-                                                             (line  763)
+                                                             (line  653)
 * pdf_general_finite_discrete:           Funciones y variables para distribuciones discretas.
                                                              (line    6)
 * pdf_geometric:                         Funciones y variables para distribuciones discretas.
-                                                             (line  333)
+                                                             (line  305)
 * pdf_gumbel:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1350)
+                                                             (line 1184)
 * pdf_hypergeometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  440)
+                                                             (line  414)
 * pdf_laplace:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1273)
+                                                             (line 1107)
 * pdf_logistic:                          Funciones y variables para distribuciones continuas.
-                                                             (line  942)
+                                                             (line  832)
 * pdf_lognormal:                         Funciones y variables para distribuciones continuas.
-                                                             (line  700)
+                                                             (line  590)
 * pdf_negative_binomial:                 Funciones y variables para distribuciones discretas.
-                                                             (line  503)
+                                                             (line  477)
 * pdf_noncentral_chi2:                   Funciones y variables para distribuciones continuas.
-                                                             (line  413)
+                                                             (line  360)
 * pdf_noncentral_student_t:              Funciones y variables para distribuciones continuas.
                                                              (line  153)
 * pdf_normal:                            Funciones y variables para distribuciones continuas.
                                                              (line    6)
 * pdf_pareto:                            Funciones y variables para distribuciones continuas.
-                                                             (line  993)
+                                                             (line  883)
 * pdf_poisson:                           Funciones y variables para distribuciones discretas.
                                                              (line  159)
 * pdf_rank_sum:                          Funciones y variables para distribuciones especiales.
                                                              (line   20)
 * pdf_rayleigh:                          Funciones y variables para distribuciones continuas.
-                                                             (line 1095)
+                                                             (line  985)
 * pdf_signed_rank:                       Funciones y variables para distribuciones especiales.
                                                              (line    6)
 * pdf_student_t:                         Funciones y variables para distribuciones continuas.
                                                              (line   77)
 * pdf_weibull:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1044)
+                                                             (line  934)
 * pearson_skewness:                      Funciones y variables de parámetros descriptivos.
                                                              (line  430)
 * pearson_skewness <1>:                  Funciones y variables de parámetros descriptivos.
@@ -8852,9 +8649,9 @@ Appendix A Índice de Funciones y Variables
 * primep_number_of_tests:                Funciones y variables para teoría de números.
                                                              (line  490)
 * principal_components:                  Funciones y variables de parámetros descriptivos.
-                                                             (line  697)
+                                                             (line  768)
 * principal_components <1>:              Funciones y variables de parámetros descriptivos.
-                                                             (line  698)
+                                                             (line  769)
 * print:                                 Funciones y variables para la impresión.
                                                              (line  524)
 * printf:                                Funciones y variables para entrada y salida.
@@ -8975,57 +8772,57 @@ Appendix A Índice de Funciones y Variables
 * quantile <1>:                          Funciones y variables de parámetros descriptivos.
                                                              (line  220)
 * quantile_bernoulli:                    Funciones y variables para distribuciones discretas.
-                                                             (line  237)
+                                                             (line  234)
 * quantile_beta:                         Funciones y variables para distribuciones continuas.
-                                                             (line  845)
+                                                             (line  735)
 * quantile_binomial:                     Funciones y variables para distribuciones discretas.
                                                              (line  115)
 * quantile_cauchy:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1334)
+                                                             (line 1168)
 * quantile_chi2:                         Funciones y variables para distribuciones continuas.
-                                                             (line  296)
+                                                             (line  284)
 * quantile_continuous_uniform:           Funciones y variables para distribuciones continuas.
-                                                             (line  898)
+                                                             (line  788)
 * quantile_discrete_uniform:             Funciones y variables para distribuciones discretas.
-                                                             (line  396)
+                                                             (line  370)
 * quantile_exp:                          Funciones y variables para distribuciones continuas.
-                                                             (line  580)
+                                                             (line  508)
 * quantile_f:                            Funciones y variables para distribuciones continuas.
-                                                             (line  486)
+                                                             (line  432)
 * quantile_gamma:                        Funciones y variables para distribuciones continuas.
-                                                             (line  780)
+                                                             (line  670)
 * quantile_general_finite_discrete:      Funciones y variables para distribuciones discretas.
                                                              (line   45)
 * quantile_geometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  343)
+                                                             (line  317)
 * quantile_gumbel:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1360)
+                                                             (line 1194)
 * quantile_hypergeometric:               Funciones y variables para distribuciones discretas.
-                                                             (line  459)
+                                                             (line  433)
 * quantile_laplace:                      Funciones y variables para distribuciones continuas.
-                                                             (line 1283)
+                                                             (line 1117)
 * quantile_logistic:                     Funciones y variables para distribuciones continuas.
-                                                             (line  952)
+                                                             (line  842)
 * quantile_lognormal:                    Funciones y variables para distribuciones continuas.
-                                                             (line  721)
+                                                             (line  611)
 * quantile_negative_binomial:            Funciones y variables para distribuciones discretas.
-                                                             (line  522)
+                                                             (line  494)
 * quantile_noncentral_chi2:              Funciones y variables para distribuciones continuas.
-                                                             (line  424)
+                                                             (line  371)
 * quantile_noncentral_student_t:         Funciones y variables para distribuciones continuas.
-                                                             (line  192)
+                                                             (line  188)
 * quantile_normal:                       Funciones y variables para distribuciones continuas.
                                                              (line   27)
 * quantile_pareto:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1003)
+                                                             (line  893)
 * quantile_poisson:                      Funciones y variables para distribuciones discretas.
                                                              (line  174)
 * quantile_rayleigh:                     Funciones y variables para distribuciones continuas.
-                                                             (line 1133)
+                                                             (line 1009)
 * quantile_student_t:                    Funciones y variables para distribuciones continuas.
                                                              (line   96)
 * quantile_weibull:                      Funciones y variables para distribuciones continuas.
-                                                             (line 1054)
+                                                             (line  944)
 * quartile_skewness:                     Funciones y variables de parámetros descriptivos.
                                                              (line  453)
 * quartile_skewness <1>:                 Funciones y variables de parámetros descriptivos.
@@ -9050,13 +8847,13 @@ Appendix A Índice de Funciones y Variables
                                                              (line 1145)
 * random:                                Números aleatorios. (line   34)
 * random_bernoulli:                      Funciones y variables para distribuciones discretas.
-                                                             (line  322)
+                                                             (line  294)
 * random_bernoulli <1>:                  Funciones y variables para distribuciones discretas.
-                                                             (line  323)
+                                                             (line  295)
 * random_beta:                           Funciones y variables para distribuciones continuas.
-                                                             (line  875)
+                                                             (line  765)
 * random_beta <1>:                       Funciones y variables para distribuciones continuas.
-                                                             (line  876)
+                                                             (line  766)
 * random_binomial:                       Funciones y variables para distribuciones discretas.
                                                              (line  147)
 * random_binomial <1>:                   Funciones y variables para distribuciones discretas.
@@ -9064,89 +8861,89 @@ Appendix A Índice de Funciones y Variables
 * random_bipartite_graph:                Funciones y variables para graphs.
                                                              (line  244)
 * random_cauchy:                         Funciones y variables para distribuciones continuas.
-                                                             (line 1340)
+                                                             (line 1174)
 * random_cauchy <1>:                     Funciones y variables para distribuciones continuas.
-                                                             (line 1341)
+                                                             (line 1175)
 * random_chi2:                           Funciones y variables para distribuciones continuas.
-                                                             (line  402)
+                                                             (line  349)
 * random_chi2 <1>:                       Funciones y variables para distribuciones continuas.
-                                                             (line  403)
+                                                             (line  350)
 * random_continuous_uniform:             Funciones y variables para distribuciones continuas.
-                                                             (line  930)
+                                                             (line  820)
 * random_continuous_uniform <1>:         Funciones y variables para distribuciones continuas.
-                                                             (line  931)
+                                                             (line  821)
 * random_digraph:                        Funciones y variables para graphs.
                                                              (line  248)
 * random_discrete_uniform:               Funciones y variables para distribuciones discretas.
-                                                             (line  428)
+                                                             (line  402)
 * random_discrete_uniform <1>:           Funciones y variables para distribuciones discretas.
-                                                             (line  429)
+                                                             (line  403)
 * random_exp:                            Funciones y variables para distribuciones continuas.
-                                                             (line  690)
+                                                             (line  580)
 * random_exp <1>:                        Funciones y variables para distribuciones continuas.
-                                                             (line  691)
+                                                             (line  581)
 * random_f:                              Funciones y variables para distribuciones continuas.
-                                                             (line  527)
+                                                             (line  469)
 * random_f <1>:                          Funciones y variables para distribuciones continuas.
-                                                             (line  528)
+                                                             (line  470)
 * random_gamma:                          Funciones y variables para distribuciones continuas.
-                                                             (line  810)
+                                                             (line  700)
 * random_gamma <1>:                      Funciones y variables para distribuciones continuas.
-                                                             (line  811)
+                                                             (line  701)
 * random_general_finite_discrete:        Funciones y variables para distribuciones discretas.
                                                              (line   81)
 * random_general_finite_discrete <1>:    Funciones y variables para distribuciones discretas.
                                                              (line   82)
 * random_geometric:                      Funciones y variables para distribuciones discretas.
-                                                             (line  374)
+                                                             (line  348)
 * random_geometric <1>:                  Funciones y variables para distribuciones discretas.
-                                                             (line  375)
+                                                             (line  349)
 * random_graph:                          Funciones y variables para graphs.
                                                              (line  257)
 * random_graph1:                         Funciones y variables para graphs.
                                                              (line  261)
 * random_gumbel:                         Funciones y variables para distribuciones continuas.
-                                                             (line 1405)
+                                                             (line 1238)
 * random_gumbel <1>:                     Funciones y variables para distribuciones continuas.
-                                                             (line 1406)
+                                                             (line 1239)
 * random_hypergeometric:                 Funciones y variables para distribuciones discretas.
-                                                             (line  490)
+                                                             (line  464)
 * random_hypergeometric <1>:             Funciones y variables para distribuciones discretas.
-                                                             (line  491)
+                                                             (line  465)
 * random_laplace:                        Funciones y variables para distribuciones continuas.
-                                                             (line 1314)
+                                                             (line 1148)
 * random_laplace <1>:                    Funciones y variables para distribuciones continuas.
-                                                             (line 1315)
+                                                             (line 1149)
 * random_logistic:                       Funciones y variables para distribuciones continuas.
-                                                             (line  983)
+                                                             (line  873)
 * random_logistic <1>:                   Funciones y variables para distribuciones continuas.
-                                                             (line  984)
+                                                             (line  874)
 * random_lognormal:                      Funciones y variables para distribuciones continuas.
-                                                             (line  752)
+                                                             (line  642)
 * random_lognormal <1>:                  Funciones y variables para distribuciones continuas.
-                                                             (line  753)
+                                                             (line  643)
 * random_negative_binomial:              Funciones y variables para distribuciones discretas.
-                                                             (line  554)
+                                                             (line  526)
 * random_negative_binomial <1>:          Funciones y variables para distribuciones discretas.
-                                                             (line  555)
+                                                             (line  527)
 * random_network:                        Funciones y variables para graphs.
                                                              (line  264)
 * random_noncentral_chi2:                Funciones y variables para distribuciones continuas.
-                                                             (line  460)
+                                                             (line  406)
 * random_noncentral_chi2 <1>:            Funciones y variables para distribuciones continuas.
-                                                             (line  461)
+                                                             (line  407)
 * random_noncentral_student_t:           Funciones y variables para distribuciones continuas.
-                                                             (line  240)
+                                                             (line  236)
 * random_noncentral_student_t <1>:       Funciones y variables para distribuciones continuas.
-                                                             (line  241)
+                                                             (line  237)
 * random_normal:                         Funciones y variables para distribuciones continuas.
                                                              (line   65)
 * random_normal <1>:                     Funciones y variables para distribuciones continuas.
                                                              (line   66)
 * random_pareto:                         Funciones y variables para distribuciones continuas.
-                                                             (line 1034)
+                                                             (line  924)
 * random_pareto <1>:                     Funciones y variables para distribuciones continuas.
-                                                             (line 1035)
+                                                             (line  925)
 * random_permutation:                    Funciones y variables para los conjuntos.
                                                              (line  818)
 * random_poisson:                        Funciones y variables para distribuciones discretas.
@@ -9154,9 +8951,9 @@ Appendix A Índice de Funciones y Variables
 * random_poisson <1>:                    Funciones y variables para distribuciones discretas.
                                                              (line  205)
 * random_rayleigh:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1263)
+                                                             (line 1097)
 * random_rayleigh <1>:                   Funciones y variables para distribuciones continuas.
-                                                             (line 1264)
+                                                             (line 1098)
 * random_regular_graph:                  Funciones y variables para graphs.
                                                              (line  252)
 * random_regular_graph <1>:              Funciones y variables para graphs.
@@ -9170,9 +8967,9 @@ Appendix A Índice de Funciones y Variables
 * random_tree:                           Funciones y variables para graphs.
                                                              (line  281)
 * random_weibull:                        Funciones y variables para distribuciones continuas.
-                                                             (line 1085)
+                                                             (line  975)
 * random_weibull <1>:                    Funciones y variables para distribuciones continuas.
-                                                             (line 1086)
+                                                             (line  976)
 * range:                                 Funciones y variables de parámetros descriptivos.
                                                              (line  205)
 * range <1>:                             Funciones y variables de parámetros descriptivos.
@@ -9749,55 +9546,55 @@ Appendix A Índice de Funciones y Variables
 * skewness <1>:                          Funciones y variables de parámetros descriptivos.
                                                              (line  407)
 * skewness_bernoulli:                    Funciones y variables para distribuciones discretas.
-                                                             (line  288)
+                                                             (line  270)
 * skewness_beta:                         Funciones y variables para distribuciones continuas.
-                                                             (line  865)
+                                                             (line  755)
 * skewness_binomial:                     Funciones y variables para distribuciones discretas.
                                                              (line  137)
 * skewness_chi2:                         Funciones y variables para distribuciones continuas.
-                                                             (line  364)
+                                                             (line  324)
 * skewness_continuous_uniform:           Funciones y variables para distribuciones continuas.
-                                                             (line  920)
+                                                             (line  810)
 * skewness_discrete_uniform:             Funciones y variables para distribuciones discretas.
-                                                             (line  418)
+                                                             (line  392)
 * skewness_exp:                          Funciones y variables para distribuciones continuas.
-                                                             (line  656)
+                                                             (line  560)
 * skewness_f:                            Funciones y variables para distribuciones continuas.
-                                                             (line  517)
+                                                             (line  459)
 * skewness_gamma:                        Funciones y variables para distribuciones continuas.
-                                                             (line  800)
+                                                             (line  690)
 * skewness_general_finite_discrete:      Funciones y variables para distribuciones discretas.
                                                              (line   69)
 * skewness_geometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  364)
+                                                             (line  338)
 * skewness_gumbel:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1386)
+                                                             (line 1220)
 * skewness_hypergeometric:               Funciones y variables para distribuciones discretas.
-                                                             (line  484)
+                                                             (line  458)
 * skewness_laplace:                      Funciones y variables para distribuciones continuas.
-                                                             (line 1304)
+                                                             (line 1138)
 * skewness_logistic:                     Funciones y variables para distribuciones continuas.
-                                                             (line  973)
+                                                             (line  863)
 * skewness_lognormal:                    Funciones y variables para distribuciones continuas.
-                                                             (line  742)
+                                                             (line  632)
 * skewness_negative_binomial:            Funciones y variables para distribuciones discretas.
-                                                             (line  544)
+                                                             (line  516)
 * skewness_noncentral_chi2:              Funciones y variables para distribuciones continuas.
-                                                             (line  450)
+                                                             (line  396)
 * skewness_noncentral_student_t:         Funciones y variables para distribuciones continuas.
-                                                             (line  228)
+                                                             (line  224)
 * skewness_normal:                       Funciones y variables para distribuciones continuas.
                                                              (line   55)
 * skewness_pareto:                       Funciones y variables para distribuciones continuas.
-                                                             (line 1024)
+                                                             (line  914)
 * skewness_poisson:                      Funciones y variables para distribuciones discretas.
                                                              (line  194)
 * skewness_rayleigh:                     Funciones y variables para distribuciones continuas.
-                                                             (line 1215)
+                                                             (line 1063)
 * skewness_student_t:                    Funciones y variables para distribuciones continuas.
                                                              (line  122)
 * skewness_weibull:                      Funciones y variables para distribuciones continuas.
-                                                             (line 1075)
+                                                             (line  965)
 * slength:                               Funciones y variables para cadenas.
                                                              (line  148)
 * smake:                                 Funciones y variables para cadenas.
@@ -9985,55 +9782,55 @@ Appendix A Índice de Funciones y Variables
 * std1 <1>:                              Funciones y variables de parámetros descriptivos.
                                                              (line   93)
 * std_bernoulli:                         Funciones y variables para distribuciones discretas.
-                                                             (line  273)
+                                                             (line  260)
 * std_beta:                              Funciones y variables para distribuciones continuas.
-                                                             (line  860)
+                                                             (line  750)
 * std_binomial:                          Funciones y variables para distribuciones discretas.
                                                              (line  132)
 * std_chi2:                              Funciones y variables para distribuciones continuas.
-                                                             (line  347)
+                                                             (line  314)
 * std_continuous_uniform:                Funciones y variables para distribuciones continuas.
-                                                             (line  915)
+                                                             (line  805)
 * std_discrete_uniform:                  Funciones y variables para distribuciones discretas.
-                                                             (line  413)
+                                                             (line  387)
 * std_exp:                               Funciones y variables para distribuciones continuas.
-                                                             (line  637)
+                                                             (line  548)
 * std_f:                                 Funciones y variables para distribuciones continuas.
-                                                             (line  512)
+                                                             (line  454)
 * std_gamma:                             Funciones y variables para distribuciones continuas.
-                                                             (line  795)
+                                                             (line  685)
 * std_general_finite_discrete:           Funciones y variables para distribuciones discretas.
                                                              (line   63)
 * std_geometric:                         Funciones y variables para distribuciones discretas.
-                                                             (line  359)
+                                                             (line  333)
 * std_gumbel:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1381)
+                                                             (line 1215)
 * std_hypergeometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  478)
+                                                             (line  452)
 * std_laplace:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1299)
+                                                             (line 1133)
 * std_logistic:                          Funciones y variables para distribuciones continuas.
-                                                             (line  968)
+                                                             (line  858)
 * std_lognormal:                         Funciones y variables para distribuciones continuas.
-                                                             (line  737)
+                                                             (line  627)
 * std_negative_binomial:                 Funciones y variables para distribuciones discretas.
-                                                             (line  539)
+                                                             (line  511)
 * std_noncentral_chi2:                   Funciones y variables para distribuciones continuas.
-                                                             (line  445)
+                                                             (line  391)
 * std_noncentral_student_t:              Funciones y variables para distribuciones continuas.
-                                                             (line  222)
+                                                             (line  218)
 * std_normal:                            Funciones y variables para distribuciones continuas.
                                                              (line   50)
 * std_pareto:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1019)
+                                                             (line  909)
 * std_poisson:                           Funciones y variables para distribuciones discretas.
                                                              (line  189)
 * std_rayleigh:                          Funciones y variables para distribuciones continuas.
-                                                             (line 1194)
+                                                             (line 1049)
 * std_student_t:                         Funciones y variables para distribuciones continuas.
                                                              (line  117)
 * std_weibull:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1070)
+                                                             (line  960)
 * stemplot:                              Funciones y variables para gráficos estadísticos.
                                                              (line  514)
 * stemplot <1>:                          Funciones y variables para gráficos estadísticos.
@@ -10555,55 +10352,55 @@ Appendix A Índice de Funciones y Variables
 * var1 <1>:                              Funciones y variables de parámetros descriptivos.
                                                              (line   52)
 * var_bernoulli:                         Funciones y variables para distribuciones discretas.
-                                                             (line  258)
+                                                             (line  250)
 * var_beta:                              Funciones y variables para distribuciones continuas.
-                                                             (line  855)
+                                                             (line  745)
 * var_binomial:                          Funciones y variables para distribuciones discretas.
                                                              (line  127)
 * var_chi2:                              Funciones y variables para distribuciones continuas.
-                                                             (line  331)
+                                                             (line  305)
 * var_continuous_uniform:                Funciones y variables para distribuciones continuas.
-                                                             (line  910)
+                                                             (line  800)
 * var_discrete_uniform:                  Funciones y variables para distribuciones discretas.
-                                                             (line  408)
+                                                             (line  382)
 * var_exp:                               Funciones y variables para distribuciones continuas.
-                                                             (line  617)
+                                                             (line  535)
 * var_f:                                 Funciones y variables para distribuciones continuas.
-                                                             (line  507)
+                                                             (line  449)
 * var_gamma:                             Funciones y variables para distribuciones continuas.
-                                                             (line  790)
+                                                             (line  680)
 * var_general_finite_discrete:           Funciones y variables para distribuciones discretas.
                                                              (line   57)
 * var_geometric:                         Funciones y variables para distribuciones discretas.
-                                                             (line  354)
+                                                             (line  328)
 * var_gumbel:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1376)
+                                                             (line 1210)
 * var_hypergeometric:                    Funciones y variables para distribuciones discretas.
-                                                             (line  472)
+                                                             (line  446)
 * var_laplace:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1294)
+                                                             (line 1128)
 * var_logistic:                          Funciones y variables para distribuciones continuas.
-                                                             (line  963)
+                                                             (line  853)
 * var_lognormal:                         Funciones y variables para distribuciones continuas.
-                                                             (line  732)
+                                                             (line  622)
 * var_negative_binomial:                 Funciones y variables para distribuciones discretas.
-                                                             (line  534)
+                                                             (line  506)
 * var_noncentral_chi2:                   Funciones y variables para distribuciones continuas.
-                                                             (line  440)
+                                                             (line  386)
 * var_noncentral_student_t:              Funciones y variables para distribuciones continuas.
-                                                             (line  216)
+                                                             (line  212)
 * var_normal:                            Funciones y variables para distribuciones continuas.
                                                              (line   46)
 * var_pareto:                            Funciones y variables para distribuciones continuas.
-                                                             (line 1014)
+                                                             (line  904)
 * var_poisson:                           Funciones y variables para distribuciones discretas.
                                                              (line  184)
 * var_rayleigh:                          Funciones y variables para distribuciones continuas.
-                                                             (line 1172)
+                                                             (line 1034)
 * var_student_t:                         Funciones y variables para distribuciones continuas.
                                                              (line  107)
 * var_weibull:                           Funciones y variables para distribuciones continuas.
-                                                             (line 1065)
+                                                             (line  955)
 * vector:                                Funciones y variables para draw.
                                                              (line 3681)
 * vector <1>:                            Funciones y variables para draw.

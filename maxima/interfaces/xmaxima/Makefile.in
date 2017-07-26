@@ -21,6 +21,7 @@
 
 # versioned installation directories
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -86,7 +87,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(top_srcdir)/common.mk $(srcdir)/Makefile.in \
-	$(srcdir)/Makefile.am $(srcdir)/autoconf-variables.tcl.in
+	$(srcdir)/Makefile.am $(srcdir)/autoconf-variables.tcl.in \
+	$(dist_appicon_DATA)
 @XMAXIMA_EXE_TRUE@am__append_1 = win32
 @WINKILL_EXE_TRUE@@XMAXIMA_EXE_FALSE@am__append_2 = win32
 subdir = interfaces/xmaxima
@@ -124,7 +126,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(appicondir)"
 SCRIPTS = $(bin_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -153,6 +155,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+DATA = $(dist_appicon_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -376,7 +379,9 @@ xmaximadir = $(verpkgdatadir)/xmaxima
 insttestsdir = $(verpkgdatadir)/tests
 SUBDIRS = msgs doc $(am__append_1) $(am__append_2)
 genericdir = $(xmaximadir)
-genericdirDATA = demos.html examples.html intro.html plotmaxima.html maxima-new.png maxima-new.gif maxima-icon.ico maxima-icon.png maxima-icon.gif
+genericdirDATA = demos.html examples.html intro.html plotmaxima.html maxima-new.png maxima-new.svg maxima-new.gif maxima-icon.ico maxima-icon.png maxima-icon.gif 
+appicondir = $(datarootdir)/pixmaps
+dist_appicon_DATA = maxima-new.png maxima-new.svg
 bin_SCRIPTS = xmaxima
 TKSOURCES = \
 	Tkmaxima/COPYING.tcl \
@@ -513,6 +518,27 @@ uninstall-binSCRIPTS:
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
+install-dist_appiconDATA: $(dist_appicon_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_appicon_DATA)'; test -n "$(appicondir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(appicondir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(appicondir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(appicondir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(appicondir)" || exit $$?; \
+	done
+
+uninstall-dist_appiconDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_appicon_DATA)'; test -n "$(appicondir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(appicondir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -669,10 +695,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(SCRIPTS)
+all-am: Makefile $(SCRIPTS) $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(appicondir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -725,7 +751,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-data-local
+install-data-am: install-data-local install-dist_appiconDATA
 
 install-dvi: install-dvi-recursive
 
@@ -769,7 +795,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binSCRIPTS uninstall-local
+uninstall-am: uninstall-binSCRIPTS uninstall-dist_appiconDATA \
+	uninstall-local
 
 .MAKE: $(am__recursive_targets) install-am install-strip
 
@@ -778,14 +805,15 @@ uninstall-am: uninstall-binSCRIPTS uninstall-local
 	distclean distclean-generic distclean-tags distdir dvi dvi-am \
 	html html-am info info-am install install-am \
 	install-binSCRIPTS install-data install-data-am \
-	install-data-local install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-binSCRIPTS uninstall-local
+	install-data-local install-dist_appiconDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
+	tags-am uninstall uninstall-am uninstall-binSCRIPTS \
+	uninstall-dist_appiconDATA uninstall-local
 
 
 # Support for installation of DATA files in a generic directory

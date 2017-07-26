@@ -1151,7 +1151,7 @@ tecleando
      (%i1) load(distrib)$
 
 Para comentarios, errores o sugerencias, por favor contáctese conmigo en
-<'mario ARROBA edu PUNTO xunta PUNTO es'>.
+<'riotorto AT yahoo DOT com'>.
 
 
 File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  Next: Funciones y variables para distribuciones discretas,  Prev: Introducción a distrib,  Up: distrib
@@ -1171,12 +1171,12 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Maxima.
 
           (%i1) load (distrib)$
-          (%i2) assume(s>0)$ cdf_normal(x,m,s);
-                                       x - m
-                                 erf(---------)
-                                     sqrt(2) s    1
-          (%o3)                  -------------- + -
-                                       2          2
+          (%i2) cdf_normal(x,m,s);
+                                              x - m
+                                        erf(---------)
+                                            sqrt(2) s    1
+          (%o2)                         -------------- + -
+                                              2          2
 
      Véase también 'erf'.
 
@@ -1265,9 +1265,9 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      n>2.
 
           (%i1) load (distrib)$
-          (%i2) assume(n>2)$  var_student_t(n);
+          (%i2) var_student_t(n);
                                           n
-          (%o3)                         -----
+          (%o2)                         -----
                                         n - 2
 
  -- Función: std_student_t (<n>)
@@ -1317,15 +1317,15 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
 
           (%i1) load (distrib)$
           (%i2) expand(pdf_noncentral_student_t(3,5,0.1));
-                 .01370030107589574 sqrt(5)
-          (%o2)  --------------------------
-                 sqrt(2) sqrt(14) sqrt(%pi)
-             1.654562884111515E-4 sqrt(5)
-           + ----------------------------
-                      sqrt(%pi)
-             .02434921505438663 sqrt(5)
-           + --------------------------
-                        %pi
+                                     7/2                         7/2
+                0.04296414417400905 5      1.323650307289301e-6 5
+          (%o2) ------------------------ + -------------------------
+                   3/2   5/2                       sqrt(%pi)
+                  2    14    sqrt(%pi)
+                                                                  7/2
+                                             1.94793720435093e-4 5
+                                           + ------------------------
+                                                       %pi
           (%i3) float(%);
           (%o3)          .02080593159405669
 
@@ -1334,16 +1334,12 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      distribución de una variable aleatoria no central de Student
      nc_t(n,ncp), con n>0 grados de libertad y parámetro de no
      centralidad ncp.  Esta función no tiene expresión compacta y se
-     calcula numéricamente si la variable global 'numer' vale 'true' o
-     si alguno de sus argumentos es un número decimal, en otro caso
-     devuelve una expresión nominal.  Para hacer uso de esta función,
-     ejecútese primero 'load(distrib)'.
+     calcula numéricamente.  Para hacer uso de esta función, ejecútese
+     primero 'load(distrib)'.
 
           (%i1) load (distrib)$
           (%i2) cdf_noncentral_student_t(-2,5,-5);
-          (%o2) cdf_noncentral_student_t(- 2, 5, - 5)
-          (%i3) cdf_noncentral_student_t(-2.0,5,-5);
-          (%o3)          .9952030093319743
+          (%o2)          .9952030093319743
 
  -- Función: quantile_noncentral_student_t (<q>,<n>,<ncp>)
      Devuelve el <q>-cuantil de una variable aleatoria no central de
@@ -1360,7 +1356,7 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      'load(distrib)'.
 
           (%i1) load (distrib)$
-          (%i2) (assume(df>1), mean_noncentral_student_t(df,k));
+          (%i2) mean_noncentral_student_t(df,k);
                              df - 1
                        gamma(------) sqrt(df) k
                                2
@@ -1416,22 +1412,14 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
 
  -- Función: pdf_chi2 (<x>,<n>)
      Devuelve el valor correspondiente a <x> de la función de densidad
-     de una variable aleatoria chi-cuadrado Chi^2(n), con n>0.
-
-     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2), por lo
-     que cuando Maxima no tiene suficiente información para obtener el
-     resultado, devuelve una forma nominal basada en la función de
-     densidad de la gamma.
+     de una variable aleatoria chi-cuadrado Chi^2(n), con n>0.  La
+     variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2).
 
           (%i1) load (distrib)$
           (%i2) pdf_chi2(x,n);
-                                              n
-          (%o2)                  pdf_gamma(x, -, 2)
-                                              2
-          (%i3) assume(x>0, n>0)$  pdf_chi2(x,n);
                                    n/2 - 1   - x/2
                                   x        %e
-          (%o4)                   ----------------
+          (%o2)                   ----------------
                                     n/2       n
                                    2    gamma(-)
                                               2
@@ -1454,105 +1442,64 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      n>0; en otras palabras, se trata de la inversa de 'cdf_chi2'.  El
      argumento <q> debe ser un número de [0,1].
 
-     Esta función no tiene expresión compacta y se calcula numéricamente
-     si la variable global 'numer' vale 'true', en otro caso devuelve
-     una expresión nominal basada en la función cuantil de la gamma,
-     puesto que la variable aleatoria Chi^2(n) equivale a una
-     Gamma(n/2,2).
+     Esta función no tiene expresión compacta y se calcula
+     numéricamente.
 
           (%i1) load (distrib)$
           (%i2) quantile_chi2(0.99,9);
           (%o2)                   21.66599433346194
-          (%i3) quantile_chi2(0.99,n);
-                                                  n
-          (%o3)              quantile_gamma(0.99, -, 2)
-                                                  2
 
  -- Función: mean_chi2 (<n>)
      Devuelve la media de una variable aleatoria Chi^2(n), con n>0.
 
-     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2), por lo
-     que cuando Maxima no tiene suficiente información para obtener el
-     resultado, devuelve una forma nominal basada en la media de la
-     gamma.
+     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2).
 
           (%i1) load (distrib)$
           (%i2) mean_chi2(n);
-                                             n
-          (%o2)                   mean_gamma(-, 2)
-                                             2
-          (%i3) assume(n>0)$ mean_chi2(n);
-          (%o4)                           n
+          (%o2)                           n
 
  -- Función: var_chi2 (<n>)
      Devuelve la varianza de una variable aleatoria Chi^2(n), con n>0.
 
-     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2), por lo
-     que cuando Maxima no tiene suficiente información para obtener el
-     resultado, devuelve una forma nominal basada en la varianza de la
-     gamma.
+     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2).
 
           (%i1) load (distrib)$
           (%i2) var_chi2(n);
-                                             n
-          (%o2)                    var_gamma(-, 2)
-                                             2
-          (%i3) assume(n>0)$ var_chi2(n);
-          (%o4)                          2 n
+          (%o2)                          2 n
 
  -- Función: std_chi2 (<n>)
      Devuelve la desviación típica de una variable aleatoria Chi^2(n),
      con n>0.
 
-     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2), por lo
-     que cuando Maxima no tiene suficiente información para obtener el
-     resultado, devuelve una forma nominal basada en la desviación
-     típica de la gamma.
+     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2).
 
           (%i1) load (distrib)$
           (%i2) std_chi2(n);
-                                             n
-          (%o2)                    std_gamma(-, 2)
-                                             2
-          (%i3) assume(n>0)$ std_chi2(n);
-          (%o4)                    sqrt(2) sqrt(n)
+          (%o2)                    sqrt(2) sqrt(n)
 
  -- Función: skewness_chi2 (<n>)
      Devuelve el coeficiente de asimetría de una variable aleatoria
      Chi^2(n), con n>0.
 
-     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2), por lo
-     que cuando Maxima no tiene suficiente información para obtener el
-     resultado, devuelve una forma nominal basada en el coeficiente de
-     asimetría de la gamma.
+     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2).
 
           (%i1) load (distrib)$
           (%i2) skewness_chi2(n);
-                                               n
-          (%o2)                 skewness_gamma(-, 2)
-                                               2
-          (%i3) assume(n>0)$ skewness_chi2(n);
-                                      2 sqrt(2)
-          (%o4)                       ---------
-                                       sqrt(n)
+                                               3/2
+                                              2
+          (%o2)                              -------
+                                             sqrt(n)
 
  -- Función: kurtosis_chi2 (<n>)
      Devuelve el coeficiente de curtosis una variable aleatoria
      Chi^2(n), con n>0.
 
-     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2), por lo
-     que cuando Maxima no tiene suficiente información para obtener el
-     resultado, devuelve una forma nominal basada en el coeficiente de
-     curtosis de la gamma.
+     La variable aleatoria Chi^2(n) equivale a una Gamma(n/2,2).
 
           (%i1) load (distrib)$
           (%i2) kurtosis_chi2(n);
-                                               n
-          (%o2)                 kurtosis_gamma(-, 2)
-                                               2
-          (%i3) assume(n>0)$ kurtosis_chi2(n);
                                          12
-          (%o4)                          --
+          (%o2)                          --
                                          n
 
  -- Función: random_chi2 (<n>)
@@ -1584,9 +1531,8 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      'cdf_noncentral_chi2'.  El argumento <q> debe ser un número de
      [0,1].
 
-     Esta función no tiene expresión compacta y se calcula numéricamente
-     si la variable global 'numer' vale 'true', en otro caso devuelve
-     una expresión nominal.
+     Esta función no tiene expresión compacta y se calcula
+     numéricamente.
 
  -- Función: mean_noncentral_chi2 (<n>,<ncp>)
      Devuelve la media de una variable aleatoria chi-cuadrado no
@@ -1644,10 +1590,6 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      m,n>0; en otras palabras, se trata de la inversa de 'cdf_f'.  El
      argumento <q> debe ser un número de [0,1].
 
-     Esta función no tiene expresión compacta, por lo que es evaluada
-     numéricamente si la variable global 'numer' vale 'true', en caso
-     contrario devuelve una forma nominal.
-
           (%i1) load (distrib)$
           (%i2) quantile_f(2/5,sqrt(3),5);
                                          2
@@ -1701,47 +1643,30 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Devuelve el valor correspondiente a <x> de la función de densidad
      de una variable aleatoria Exponencial(m), con m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la densidad de
-     Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) pdf_exp(x,m);
-                                                  1
-          (%o2)                 pdf_weibull(x, 1, -)
-                                                  m
-          (%i3) assume(x>0,m>0)$  pdf_exp(x,m);
                                           - m x
-          (%o4)                       m %e
+          (%o2)                       m %e
 
  -- Función: cdf_exp (<x>,<m>)
      Devuelve el valor correspondiente a <x> de la función de
      distribución de una variable aleatoria Exponencial(m), con m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la distribución
-     de Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) cdf_exp(x,m);
-                                                  1
-          (%o2)                 cdf_weibull(x, 1, -)
-                                                  m
-          (%i3) assume(x>0,m>0)$  cdf_exp(x,m);
                                            - m x
-          (%o4)                      1 - %e
+          (%o2)                      1 - %e
 
  -- Función: quantile_exp (<q>,<m>)
      Devuelve el <q>-cuantil de una variable aleatoria Exponencial(m),
      con m>0; en otras palabras, se trata de la inversa de 'cdf_exp'.
      El argumento <q> debe ser un número de [0,1].
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el cuantil de
-     la Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) quantile_exp(0.56,5);
@@ -1755,38 +1680,24 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Devuelve la media de una variable aleatoria Exponencial(m), con
      m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la media de la
-     Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) mean_exp(m);
-                                                 1
-          (%o2)                  mean_weibull(1, -)
-                                                 m
-          (%i3) assume(m>0)$  mean_exp(m);
                                           1
-          (%o4)                           -
+          (%o2)                           -
                                           m
 
  -- Función: var_exp (<m>)
      Devuelve la varianza de una variable aleatoria Exponencial(m), con
      m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la varianza de
-     la Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) var_exp(m);
-                                                 1
-          (%o2)                   var_weibull(1, -)
-                                                 m
-          (%i3) assume(m>0)$  var_exp(m);
                                          1
-          (%o4)                          --
+          (%o2)                          --
                                           2
                                          m
 
@@ -1794,54 +1705,33 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Devuelve la desviación típica de una variable aleatoria
      Exponencial(m), con m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la desviación
-     típica de la Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) std_exp(m);
-                                                 1
-          (%o2)                   std_weibull(1, -)
-                                                 m
-          (%i3) assume(m>0)$  std_exp(m);
                                           1
-          (%o4)                           -
+          (%o2)                           -
                                           m
 
  -- Función: skewness_exp (<m>)
      Devuelve el coeficiente de asimetría de una variable aleatoria
      Exponencial(m), con m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el coeficiente
-     de asimetría de la Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) skewness_exp(m);
-                                                   1
-          (%o2)                skewness_weibull(1, -)
-                                                   m
-          (%i3) assume(m>0)$  skewness_exp(m);
-          (%o4)                           2
+          (%o2)                           2
 
  -- Función: kurtosis_exp (<m>)
      Devuelve el coeficiente de curtosis una variable aleatoria
      Exponencial(m), con m>0.
 
-     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el coeficiente
-     de curtosis de la Weibull.
+     La variable aleatoria Exponencial(m) equivale a una Weibull(1,1/m).
 
           (%i1) load (distrib)$
           (%i2) kurtosis_exp(m);
-                                                   1
-          (%o2)                kurtosis_weibull(1, -)
-                                                   m
-          (%i3) assume(m>0)$  kurtosis_exp(m);
-          (%o4)                           6
+          (%o3)                           6
 
  -- Función: random_exp (<m>)
  -- Función: random_exp (<m>,<k>)
@@ -1869,7 +1759,7 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
                                      log(x) - m
                                  erf(----------)
                                      sqrt(2) s     1
-          (%o3)                  --------------- + -
+          (%o2)                  --------------- + -
                                         2          2
 
      Véase también 'erf'.
@@ -2252,98 +2142,63 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Devuelve el valor correspondiente a <x> de la función de densidad
      de una variable aleatoria de Rayleigh(b), con b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la densidad de
-     la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) pdf_rayleigh(x,b);
-                                                  1
-          (%o2)                 pdf_weibull(x, 2, -)
-                                                  b
-          (%i3) assume(x>0,b>0)$ pdf_rayleigh(x,b);
                                               2  2
                                      2     - b  x
-          (%o4)                   2 b  x %e
+          (%o2)                   2 b  x %e
 
  -- Función: cdf_rayleigh (<x>,<b>)
      Devuelve el valor correspondiente a <x> de la función de
      distribución de una variable aleatoria de Rayleigh(b), con b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la distribución
-     de la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) cdf_rayleigh(x,b);
-                                                  1
-          (%o2)                 cdf_weibull(x, 2, -)
-                                                  b
-          (%i3) assume(x>0,b>0)$ cdf_rayleigh(x,b);
                                              2  2
                                           - b  x
-          (%o4)                     1 - %e
+          (%o2)                     1 - %e
 
  -- Función: quantile_rayleigh (<q>,<b>)
      Devuelve el <q>-cuantil de una variable aleatoria de Rayleigh(b),
      con b>0; en otras palabras, se trata de la inversa de
      'cdf_rayleigh'.  El argumento <q> debe ser un número de [0,1].
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en los cuantiles
-     de la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) quantile_rayleigh(0.99,b);
-                                                      1
-          (%o2)             quantile_weibull(0.99, 2, -)
-                                                      b
-          (%i3) assume(x>0,b>0)$ quantile_rayleigh(0.99,b);
                                   2.145966026289347
-          (%o4)                   -----------------
+          (%o2)                   -----------------
                                           b
 
  -- Función: mean_rayleigh (<b>)
      Devuelve la media de una variable aleatoria de Rayleigh(b), con
      b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la media de la
-     Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) mean_rayleigh(b);
-                                                 1
-          (%o2)                  mean_weibull(2, -)
-                                                 b
-          (%i3) assume(b>0)$ mean_rayleigh(b);
                                       sqrt(%pi)
-          (%o4)                       ---------
+          (%o2)                       ---------
                                          2 b
 
  -- Función: var_rayleigh (<b>)
      Devuelve la varianza de una variable aleatoria de Rayleigh(b), con
      b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la varianza de
-     la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) var_rayleigh(b);
-                                                 1
-          (%o2)                   var_weibull(2, -)
-                                                 b
-          (%i3) assume(b>0)$ var_rayleigh(b);
                                            %pi
                                        1 - ---
                                             4
-          (%o4)                        -------
+          (%o2)                        -------
                                           2
                                          b
 
@@ -2351,43 +2206,29 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Devuelve la desviación típica de una variable aleatoria de
      Rayleigh(b), con b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la desviación
-     típica de la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) std_rayleigh(b);
-                                                 1
-          (%o2)                   std_weibull(2, -)
-                                                 b
-          (%i3) assume(b>0)$ std_rayleigh(b);
                                              %pi
                                     sqrt(1 - ---)
                                               4
-          (%o4)                     -------------
+          (%o2)                     -------------
                                           b
 
  -- Función: skewness_rayleigh (<b>)
      Devuelve el coeficiente de asimetría de una variable aleatoria de
      Rayleigh(b), con b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el coeficiente
-     de asimetría de la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) skewness_rayleigh(b);
-                                                   1
-          (%o2)                skewness_weibull(2, -)
-                                                   b
-          (%i3) assume(b>0)$ skewness_rayleigh(b);
                                    3/2
                                 %pi      3 sqrt(%pi)
                                 ------ - -----------
                                   4           4
-          (%o4)                 --------------------
+          (%o2)                 --------------------
                                          %pi 3/2
                                     (1 - ---)
                                           4
@@ -2396,22 +2237,15 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Devuelve el coeficiente de curtosis una variable aleatoria de
      Rayleigh(b), con b>0.
 
-     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el coeficiente
-     de curtosis de la Weibull.
+     La variable aleatoria Rayleigh(b) equivale a una Weibull(2,1/b).
 
           (%i1) load (distrib)$
           (%i2) kurtosis_rayleigh(b);
-                                                   1
-          (%o2)                kurtosis_weibull(2, -)
-                                                   b
-          (%i3) assume(b>0)$ kurtosis_rayleigh(b);
                                             2
                                        3 %pi
                                    2 - ------
                                          16
-          (%o4)                    ---------- - 3
+          (%o2)                    ---------- - 3
                                         %pi 2
                                    (1 - ---)
                                          4
@@ -2524,8 +2358,8 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      b>0.
 
           (%i1) load (distrib)$
-          (%i2) assume(b>0)$  mean_gumbel(a,b);
-          (%o3)                     %gamma b + a
+          (%i2) mean_gumbel(a,b);
+          (%o2)                     %gamma b + a
      donde el símbolo '%gamma' representa la constante de
      Euler-Mascheroni.  Véase también '%gamma'.
 
@@ -2544,13 +2378,12 @@ File: maxima.info,  Node: Funciones y variables para distribuciones continuas,  
      Gumbel(a,b), con b>0.
 
           (%i1) load (distrib)$
-          (%i2) assume(b>0)$ skewness_gumbel(a,b);
-                                 12 sqrt(6) zeta(3)
-          (%o3)                  ------------------
-                                           3
-                                        %pi
-          (%i4) numer:true$ skewness_gumbel(a,b);
-          (%o5)                   1.139547099404649
+          (%i2) skewness_gumbel(a,b);
+                                            3/2
+                                         2 6    zeta(3)
+          (%o2)                          --------------
+                                                 3
+                                              %pi
      donde 'zeta' representa la función zeta de Riemann.
 
  -- Función: kurtosis_gumbel (<a>,<b>)
@@ -2666,14 +2499,14 @@ File: maxima.info,  Node: Funciones y variables para distribuciones discretas,  
 
  -- Función: pdf_binomial (<x>,<n>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
-     probabilidad de una variable aleatoria Binomial(n,p), con 0<p<1 y n
-     entero positivo.  Para hacer uso de esta función, ejecútese primero
-     'load(distrib)'.
+     probabilidad de una variable aleatoria Binomial(n,p), con 0 \leq p
+     \leq 1 y n entero positivo.  Para hacer uso de esta función,
+     ejecútese primero 'load(distrib)'.
 
  -- Función: cdf_binomial (<x>,<n>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
-     distribución de una variable aleatoria Binomial(n,p), con 0<p<1 y n
-     entero positivo.
+     distribución de una variable aleatoria Binomial(n,p), con 0 \leq p
+     \leq 1 y n entero positivo.
 
           (%i1) load (distrib)$
           (%i2) cdf_binomial(5,7,1/6);
@@ -2685,41 +2518,41 @@ File: maxima.info,  Node: Funciones y variables para distribuciones discretas,  
 
  -- Función: quantile_binomial (<q>,<n>,<p>)
      Devuelve el <q>-cuantil de una variable aleatoria Binomial(n,p),
-     con 0<p<1 y n entero positivo; en otras palabras, se trata de la
-     inversa de 'cdf_binomial'.  El argumento <q> debe ser un número de
-     [0,1].  Para hacer uso de esta función, ejecútese primero
-     'load(distrib)'.
+     con 0 \leq p \leq 1 y n entero positivo; en otras palabras, se
+     trata de la inversa de 'cdf_binomial'.  El argumento <q> debe ser
+     un número de [0,1].  Para hacer uso de esta función, ejecútese
+     primero 'load(distrib)'.
 
  -- Función: mean_binomial (<n>,<p>)
-     Devuelve la media de una variable aleatoria Binomial(n,p), con
-     0<p<1 y n entero positivo.  Para hacer uso de esta función,
+     Devuelve la media de una variable aleatoria Binomial(n,p), con 0
+     \leq p \leq 1 y n entero positivo.  Para hacer uso de esta función,
      ejecútese primero 'load(distrib)'.
 
  -- Función: var_binomial (<n>,<p>)
-     Devuelve la varianza de una variable aleatoria Binomial(n,p), con
-     0<p<1 y n entero positivo.  Para hacer uso de esta función,
+     Devuelve la varianza de una variable aleatoria Binomial(n,p), con 0
+     \leq p \leq 1 y n entero positivo.  Para hacer uso de esta función,
      ejecútese primero 'load(distrib)'.
 
  -- Función: std_binomial (<n>,<p>)
      Devuelve la desviación típica de una variable aleatoria
-     Binomial(n,p), con 0<p<1 y n entero positivo.  Para hacer uso de
-     esta función, ejecútese primero 'load(distrib)'.
+     Binomial(n,p), con 0 \leq p \leq 1 y n entero positivo.  Para hacer
+     uso de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: skewness_binomial (<n>,<p>)
      Devuelve el coeficiente de asimetría de una variable aleatoria
-     Binomial(n,p), con 0<p<1 y n entero positivo.  Para hacer uso de
-     esta función, ejecútese primero 'load(distrib)'.
+     Binomial(n,p), con 0 \leq p \leq 1 y n entero positivo.  Para hacer
+     uso de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: kurtosis_binomial (<n>,<p>)
      Devuelve el coeficiente de curtosis de una variable aleatoria
-     binomial Binomial(n,p), con 0<p<1 y n entero positivo.  Para hacer
-     uso de esta función, ejecútese primero 'load(distrib)'.
+     binomial Binomial(n,p), con 0 \leq p \leq 1 y n entero positivo.
+     Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: random_binomial (<n>,<p>)
  -- Función: random_binomial (<n>,<p>,<m>)
-     Devuelve un valor aleatorio Binomial(n,p), con 0<p<1 y n entero
-     positivo.  Llamando a 'random_binomial' con un tercer argumento
-     <m>, se simulará una muestra aleatoria de tamaño <m>.
+     Devuelve un valor aleatorio Binomial(n,p), con 0 \leq p \leq 1 y n
+     entero positivo.  Llamando a 'random_binomial' con un tercer
+     argumento <m>, se simulará una muestra aleatoria de tamaño <m>.
 
      El algoritmo de simulación es el descrito en Kachitvichyanukul, V.
      y Schmeiser, B.W. (1988) <Binomial Random Variate Generation>.
@@ -2787,114 +2620,86 @@ File: maxima.info,  Node: Funciones y variables para distribuciones discretas,  
 
  -- Función: pdf_bernoulli (<x>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
-     probabilidad de una variable aleatoria de Bernoulli(p), con 0<p<1.
+     probabilidad de una variable aleatoria de Bernoulli(p), con 0 \leq
+     p \leq 1.
 
-     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la función de
-     probabilidad de la binomial.
+     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p).
 
           (%i1) load (distrib)$
           (%i2) pdf_bernoulli(1,p);
-          (%o2)                 pdf_binomial(1, 1, p)
-          (%i3) assume(0<p,p<1)$ pdf_bernoulli(1,p);
-          (%o4)                           p
+          (%o2)                           p
 
  -- Función: cdf_bernoulli (<x>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
-     distribución de una variable aleatoria de Bernoulli(p), con 0<p<1.
-     Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
+     distribución de una variable aleatoria de Bernoulli(p), con 0 \leq
+     p \leq 1.  Para hacer uso de esta función, ejecútese primero
+     'load(distrib)'.
 
  -- Función: quantile_bernoulli (<q>,<p>)
      Devuelve el <q>-cuantil de una variable aleatoria de Bernoulli(p),
-     con 0<p<1; en otras palabras, se trata de la inversa de
+     con 0 \leq p \leq 1; en otras palabras, se trata de la inversa de
      'cdf_bernoulli'.  El argumento <q> debe ser un número de [0,1].
      Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: mean_bernoulli (<p>)
-     Devuelve la media de una variable aleatoria de Bernoulli(p), con
-     0<p<1.
+     Devuelve la media de una variable aleatoria de Bernoulli(p), con 0
+     \leq p \leq 1.
 
-     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la media de la
-     binomial.
+     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p).
 
           (%i1) load (distrib)$
           (%i2) mean_bernoulli(p);
-          (%o2)                  mean_binomial(1, p)
-          (%i3) assume(0<p,p<1)$ mean_bernoulli(p);
-          (%o4)                           p
+          (%o2)                           p
 
  -- Función: var_bernoulli (<p>)
      Devuelve la varianza de una variable aleatoria de Bernoulli(p), con
-     0<p<1.
+     0 \leq p \leq 1.
 
-     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la varianza de
-     la binomial.
+     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p).
 
           (%i1) load (distrib)$
           (%i2) var_bernoulli(p);
-          (%o2)                  var_binomial(1, p)
-          (%i3) assume(0<p,p<1)$ var_bernoulli(p);
-          (%o4)                       (1 - p) p
+          (%o2)                       (1 - p) p
 
  -- Función: std_bernoulli (<p>)
      Devuelve la desviación típica de una variable aleatoria de
-     Bernoulli(p), con 0<p<1.
+     Bernoulli(p), con 0 \leq p \leq 1.
 
-     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en la desviación
-     típica de la binomial.
+     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p).
 
           (%i1) load (distrib)$
           (%i2) std_bernoulli(p);
-          (%o2)                  std_binomial(1, p)
-          (%i3) assume(0<p,p<1)$ std_bernoulli(p);
-          (%o4)                  sqrt(1 - p) sqrt(p)
+          (%o2)                           sqrt((1 - p) p)
 
  -- Función: skewness_bernoulli (<p>)
      Devuelve el coeficiente de asimetría de una variable aleatoria de
-     Bernoulli(p), con 0<p<1.
+     Bernoulli(p), con 0 \leq p \leq 1.
 
-     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el coeficiente
-     de asimetría de la binomial.
+     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p).
 
           (%i1) load (distrib)$
           (%i2) skewness_bernoulli(p);
-          (%o2)                skewness_binomial(1, p)
-          (%i3) assume(0<p,p<1)$ skewness_bernoulli(p);
-                                       1 - 2 p
-          (%o4)                  -------------------
-                                 sqrt(1 - p) sqrt(p)
+                                              1 - 2 p
+          (%o2)                           ---------------
+                                          sqrt((1 - p) p)
 
  -- Función: kurtosis_bernoulli (<p>)
      Devuelve el coeficiente de curtosis una variable aleatoria de
-     Bernoulli(p), con 0<p<1.
+     Bernoulli(p), con 0 \leq p \leq 1.
 
-     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p),
-     por lo que si Maxima no tiene suficiente información para calcular
-     el resultado, devolverá una forma nominal basada en el coeficiente
-     de curtosis de la binomial.
+     La variable aleatoria Bernoulli(p) equivale a una Binomial(1,p).
 
           (%i1) load (distrib)$
           (%i2) kurtosis_bernoulli(p);
-          (%o2)                kurtosis_binomial(1, p)
-          (%i3) assume(0<p,p<1)$ kurtosis_bernoulli(p);
                                    1 - 6 (1 - p) p
-          (%o4)                    ---------------
+          (%o2)                    ---------------
                                       (1 - p) p
 
  -- Función: random_bernoulli (<p>)
  -- Función: random_bernoulli (<p>,<n>)
-     Devuelve un valor aleatorio Bernoulli(p), con 0<p<1.  Llamando a
-     'random_bernoulli' con un segundo argumento <n>, se simulará una
-     muestra aleatoria de tamaño <n>.
+     Devuelve un valor aleatorio Bernoulli(p), con 0 \leq p \leq 1.
+     Llamando a 'random_bernoulli' con un segundo argumento <n>, se
+     simulará una muestra aleatoria de tamaño <n>.
 
      Es aplicación directa de la función 'random' de Maxima.
 
@@ -2903,50 +2708,52 @@ File: maxima.info,  Node: Funciones y variables para distribuciones discretas,  
 
  -- Función: pdf_geometric (<x>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
-     probabilidad de una variable aleatoria Geométrica(p), con 0<p<1.
-     Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
+     probabilidad de una variable aleatoria Geométrica(p), con 0 < p
+     \leq 1.  Para hacer uso de esta función, ejecútese primero
+     'load(distrib)'.
 
  -- Función: cdf_geometric (<x>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
-     distribución de una variable aleatoria Geométrica(p), con 0<p<1.
-     Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
+     distribución de una variable aleatoria Geométrica(p), con 0 < p
+     \leq 1.  Para hacer uso de esta función, ejecútese primero
+     'load(distrib)'.
 
  -- Función: quantile_geometric (<q>,<p>)
      Devuelve el <q>-cuantil de una variable aleatoria Geométrica(p),
-     con 0<p<1; en otras palabras, se trata de la inversa de
+     con 0 < p \leq 1; en otras palabras, se trata de la inversa de
      'cdf_geometric'.  El argumento <q> debe ser un número de [0,1].
      Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: mean_geometric (<p>)
-     Devuelve la media de una variable aleatoria Geométrica(p), con
-     0<p<1.  Para hacer uso de esta función, ejecútese primero
+     Devuelve la media de una variable aleatoria Geométrica(p), con 0 <
+     p \leq 1.  Para hacer uso de esta función, ejecútese primero
      'load(distrib)'.
 
  -- Función: var_geometric (<p>)
-     Devuelve la varianza de una variable aleatoria Geométrica(p), con
-     0<p<1.  Para hacer uso de esta función, ejecútese primero
+     Devuelve la varianza de una variable aleatoria Geométrica(p), con 0
+     < p \leq 1.  Para hacer uso de esta función, ejecútese primero
      'load(distrib)'.
 
  -- Función: std_geometric (<p>)
      Devuelve la desviación típica de una variable aleatoria
-     Geométrica(p), con 0<p<1.  Para hacer uso de esta función,
+     Geométrica(p), con 0 < p \leq 1.  Para hacer uso de esta función,
      ejecútese primero 'load(distrib)'.
 
  -- Función: skewness_geometric (<p>)
      Devuelve el coeficiente de asimetría de una variable aleatoria
-     Geométrica(p), con 0<p<1.  Para hacer uso de esta función,
+     Geométrica(p), con 0 < p \leq 1.  Para hacer uso de esta función,
      ejecútese primero 'load(distrib)'.
 
  -- Función: kurtosis_geometric (<p>)
      Devuelve el coeficiente de curtosis de una variable aleatoria
-     Geométrica(p), con 0<p<1.  Para hacer uso de esta función,
+     Geométrica(p), con 0 < p \leq 1.  Para hacer uso de esta función,
      ejecútese primero 'load(distrib)'.
 
  -- Función: random_geometric (<p>)
  -- Función: random_geometric (<p>,<n>)
-     Devuelve un valor aleatorio Geométrico(p), con 0<p<1.  Llamando a
-     'random_geometric' con un segundo argumento <n>, se simulará una
-     muestra aleatoria de tamaño <n>.
+     Devuelve un valor aleatorio Geométrico(p), con 0 < p \leq 1.
+     Llamando a 'random_geometric' con un segundo argumento <n>, se
+     simulará una muestra aleatoria de tamaño <n>.
 
      El algoritmo está basado en la simulación de ensayos de Bernoulli.
 
@@ -3013,9 +2820,9 @@ File: maxima.info,  Node: Funciones y variables para distribuciones discretas,  
      probabilidad de una variable aleatoria Hipergeométrica(n1,n2,n),
      con <n1>, <n2> y <n> enteros positivos y n<=n1+n2.  Siendo <n1> el
      número de objetos de la clase A, <n2> el número de objetos de la
-     clase B y <n> el tamaño de una muestra sin reemplazamiento, esta
-     función devuelve la probabilidad del suceso "extraer exactamente
-     <x> objetos de la clase A".
+     clase B y <n> el tamaño de una muestra sin reemplazo, esta función
+     devuelve la probabilidad del suceso "extraer exactamente <x>
+     objetos de la clase A".
 
      Para hacer uso de esta función, ejecútese primero 'load(distrib)'.
 
@@ -3074,59 +2881,58 @@ File: maxima.info,  Node: Funciones y variables para distribuciones discretas,  
  -- Función: pdf_negative_binomial (<x>,<n>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
      probabilidad de una variable aleatoria Binomial Negativa(n,p), con
-     0<p<1 y n positivo.  Para hacer uso de esta función, ejecútese
-     primero 'load(distrib)'.
+     0 < p \leq 1 y n positivo.  Para hacer uso de esta función,
+     ejecútese primero 'load(distrib)'.
 
  -- Función: cdf_negative_binomial (<x>,<n>,<p>)
      Devuelve el valor correspondiente a <x> de la función de
      distribución de una variable aleatoria Binomial Negativa(n,p), con
-     0<p<1 y n positivo.
+     0 < p \leq 1 y n positivo.
 
           (%i1) load (distrib)$
           (%i2) cdf_negative_binomial(3,4,1/8);
                                       3271
           (%o2)                      ------
                                      524288
-          (%i3) float(%);
-          (%o3)              .006238937377929687
 
  -- Función: quantile_negative_binomial (<q>,<n>,<p>)
      Devuelve el <q>-cuantil de una variable aleatoria Binomial
-     Negativa(n,p), con 0<p<1 y n positivo; en otras palabras, se trata
-     de la inversa de 'cdf_negative_binomial'.  El argumento <q> debe
-     ser un número de [0,1].  Para hacer uso de esta función, ejecútese
-     primero 'load(distrib)'.
+     Negativa(n,p), con 0 < p \leq 1 y n positivo; en otras palabras, se
+     trata de la inversa de 'cdf_negative_binomial'.  El argumento <q>
+     debe ser un número de [0,1].  Para hacer uso de esta función,
+     ejecútese primero 'load(distrib)'.
 
  -- Función: mean_negative_binomial (<n>,<p>)
      Devuelve la media de una variable aleatoria Binomial Negativa(n,p),
-     con 0<p<1 and n positivo.  Para hacer uso de esta función,
+     con 0 < p \leq 1 and n positivo.  Para hacer uso de esta función,
      ejecútese primero 'load(distrib)'.
 
  -- Función: var_negative_binomial (<n>,<p>)
      Devuelve la varianza de una variable aleatoria Binomial
-     Negativa(n,p), con 0<p<1 and n positivo.  Para hacer uso de esta
-     función, ejecútese primero 'load(distrib)'.
+     Negativa(n,p), con 0 < p \leq 1 and n positivo.  Para hacer uso de
+     esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: std_negative_binomial (<n>,<p>)
      Devuelve la desviación típica de una variable aleatoria Binomial
-     Negativa(n,p), con 0<p<1 and n positivo.  Para hacer uso de esta
-     función, ejecútese primero 'load(distrib)'.
+     Negativa(n,p), con 0 < p \leq 1 and n positivo.  Para hacer uso de
+     esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: skewness_negative_binomial (<n>,<p>)
      Devuelve el coeficiente de asimetría de una variable aleatoria
-     Binomial Negativa(n,p), con 0<p<1 and n positivo.  Para hacer uso
-     de esta función, ejecútese primero 'load(distrib)'.
+     Binomial Negativa(n,p), con 0 < p \leq 1 and n positivo.  Para
+     hacer uso de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: kurtosis_negative_binomial (<n>,<p>)
      Devuelve el coeficiente de curtosis una variable aleatoria binomial
-     negativa NB(n,p), con 0<p<1 and n positivo.  Para hacer uso de esta
-     función, ejecútese primero 'load(distrib)'.
+     negativa NB(n,p), con 0 < p \leq 1 and n positivo.  Para hacer uso
+     de esta función, ejecútese primero 'load(distrib)'.
 
  -- Función: random_negative_binomial (<n>,<p>)
  -- Función: random_negative_binomial (<n>,<p>,<m>)
-     Devuelve un valor aleatorio Binomial Negativo(n,p), con 0<p<1 y n
-     positivo.  Llamando a 'random_negative_binomial' con un tercer
-     argumento <m>, se simulará una muestra aleatoria de tamaño <m>.
+     Devuelve un valor aleatorio Binomial Negativo(n,p), con 0 < p \leq
+     1 y n positivo.  Llamando a 'random_negative_binomial' con un
+     tercer argumento <m>, se simulará una muestra aleatoria de tamaño
+     <m>.
 
      Algoritmo descrito en Devroye, L. (1986) <Non-Uniform Random
      Variate Generation>.  Springer Verlag, p.  480.
@@ -7512,4 +7318,177 @@ File: maxima.info,  Node: Funciones y variables para drawdf,  Prev: Introducción
                                    color = colors[k],
                                    soln_at(3, 2 + k/20) ],
                                  k,1,5))$
+
+
+File: maxima.info,  Node: dynamics,  Next: ezunits,  Prev: drawdf,  Up: Top
+
+49 dynamics
+***********
+
+* Menu:
+
+* El paquete dynamics::
+* Análisis gráfico de sistemas dinámicos discretos::
+* Visualización usando VTK::
+
+
+File: maxima.info,  Node: El paquete dynamics,  Next: Análisis gráfico de sistemas dinámicos discretos,  Prev: dynamics,  Up: dynamics
+
+49.1 El paquete dynamics
+========================
+
+El paquete adicional 'dynamics' incluye funciones para visualización 3D,
+animaciones, análisis gráfico de ecuaciones diferenciales y ecuaciones
+de diferencias y para resolución numérica de ecuaciones diferenciales.
+Las funciones para ecuaciones diferenciales se describen en la sección
+sobre 'Métodos numéricos' y las funciones para representar las gráficas
+de los conjuntos de Mandelbrot y de Julia se describen en la sección
+sobre 'Gráficos'.
+
+Todas las funciones en este paquete se cargan automáticamente la primera
+vez que se usan.
+
+
+File: maxima.info,  Node: Análisis gráfico de sistemas dinámicos discretos,  Next: Visualización usando VTK,  Prev: El paquete dynamics,  Up: dynamics
+
+49.2 Análisis gráfico de sistemas dinámicos discretos
+=====================================================
+
+ -- Función: chaosgame ([[<x1>, <y1>]...[<xm>, <ym>]], [<x0>, <y0>],
+          <b>, <n>, <opciones>, ...);
+
+     Usa el método llamado juego del caos, para producir fractales: se
+     dibuja un punto inicial (<x0>, <y0>) y luego se elije
+     aleatoriamente uno de los <m> puntos '['<x1>, <y1>']'...'['<xm>,
+     <ym>']'.  Después se dibuja un nuevo punto que estará en el
+     segmento entre el último punto dibujado y el punto que se acabó de
+     elegir aleatoriamente, a una distancia del punto elegido que será
+     <b> veces la longitud del segmento.  El proceso se repite <n>
+     veces.  Este programa acepta las mismas opciones de 'plot2d'.
+
+     *Ejemplo*.  Gráfico del triángulo de Sierpinsky:
+
+          (%i1) chaosgame([[0, 0], [1, 0], [0.5, sqrt(3)/2]], [0.1, 0.1], 1/2,
+                           30000, [style, dots]);
+
+ -- Función: evolution evolution (<F>, <y0>, <n>, ..., <opciones>, ...);
+
+     Dibuja <n+1> puntos en una gráfica bidimensional (serie de tiempo),
+     en que las coordenadas horizontales de los puntos son los números
+     enteros 0, 1, 2, ..., <n>, y las coordenadas verticales son los
+     valores <y(n)> correspondientes, obtenidos a partir de la relación
+     de recurrencia
+                  y(n+1) = F(y(n))
+
+     Con valor inicial <y(0)> igual a <y0>.  <F> deberá ser una
+     expresión que dependa únicamente de la variable <y> (y no de <n>),
+     <y0> deberá ser un número real y <n> un número entero positivo.
+     Esta función acepta las mismas opciones que 'plot2d'.
+
+     *Ejemplo*.
+
+          (%i1) evolution(cos(y), 2, 11);
+
+ -- Función: evolution2d ([<F>, <G>], [<u>, <v>], [<u0>, <y0>], <n>,
+          <opciones>, ...);
+
+     Muestra, en una gráfica bidimensional, los primeros <n+1> puntos de
+     la sucesión definida a partir del sistema dinámico discreto con
+     relaciones de recurrencia:
+                  x(n+1) = F(x(n), y(n))    y(n+1) = G(x(n), y(n))
+
+     Con valores iniciales <x0> y <y0>.  <F> y <G> deben ser dos
+     expresiones que dependan únicamente de <x> y <y>.  Esta función
+     acepta las mismas opciones que 'plot2d'.
+
+     *Ejemplo*.  Evolución de un sistema dinámico discreto en dos
+     dimensiones:
+
+          (%i1) f: 0.6*x*(1+2*x)+0.8*y*(x-1)-y^2-0.9$
+          (%i2) g: 0.1*x*(1-6*x+4*y)+0.1*y*(1+9*y)-0.4$
+          (%i3) evolution2d([f,g], [x,y], [-0.5,0], 50000, [style,dots]);
+
+     Y un acercamiento de una pequeña región en ese fractal:
+
+          (%i9) evolution2d([f,g], [x,y], [-0.5,0], 300000, [x,-0.8,-0.6],
+                            [y,-0.4,-0.2], [style, dots]);
+
+ -- Función: ifs ([<r1>, ..., <rm>], [<A1>,..., <Am>], [[<x1>, <y1>],
+          ..., [<xm>, <ym>]], [<x0>, <y0>], <n>, <opciones>, ...);
+
+     Usa el método del Sistema de Funciones Iteradas (IFS, en inglés
+     Iterated Function System).  Ese método es semejante al método
+     descrito en la función 'chaosgame'.  pero en vez de aproximar el
+     último punto al punto elegido aleatoriamente, las dos coordenadas
+     del último punto se multiplican por una matriz 2 por 2 <Ai>
+     correspondiente al punto que fue elegido aleatoriamente.
+
+     La selección aleatoria de uno de los <m> puntos atractivos puede
+     ser realizada con una función de probabilidad no uniforme, definida
+     con los pesos <r1>,...,<rm>.  Esos pesos deben ser dados en forma
+     acumulada; por ejemplo, si se quieren 3 puntos con probabilidades
+     0.2, 0.5 y 0.3, los pesos <r1>, <r2> y <r3> podrían ser 2, 7 y 10,
+     o cualquier otro grupo de números que tengan la misma proporción.
+     Esta función acepta las mismas opciones que 'plot2d'.
+
+     *Ejemplo*.  El helecho de Barnsley, creado con 4 matrices y 4
+     puntos:
+
+          (%i1) a1: matrix([0.85,0.04],[-0.04,0.85])$
+          (%i2) a2: matrix([0.2,-0.26],[0.23,0.22])$
+          (%i3) a3: matrix([-0.15,0.28],[0.26,0.24])$
+          (%i4) a4: matrix([0,0],[0,0.16])$
+          (%i5) p1: [0,1.6]$
+          (%i6) p2: [0,1.6]$
+          (%i7) p3: [0,0.44]$
+          (%i8) p4: [0,0]$
+          (%i9) w: [85,92,99,100]$
+          (%i10) ifs(w, [a1,a2,a3,a4], [p1,p2,p3,p4], [5,0], 50000, [style,dots]);
+
+ -- Función: orbits (<F>, <y0>, <n1>, <n2>, [<x>, <x0>, <xf>, <xstep>],
+          <opciones>, ...);
+
+     Dibuja el diagrama de órbitas de una familia de sistemas dinámicos
+     discretos unidimensionales, con un parámetro <x>; ese tipo de
+     diagrama se usa para mostrar las bifurcaciones de un sistema
+     discreto unidimensional.
+
+     La función <F(y)> define una secuencia que comienza con un valor
+     inicial <y0>, igual que en el caso de la función 'evolution', pero
+     en este caso la función también dependerá del parámetro <x>, el
+     cual tomará valores comprendidos en el intervalo de <x0> a <xf>,
+     con incrementos <xstep>.  Cada valor usado para el parámetro <x> se
+     muestra en el eje horizontal.  En el eje vertical se mostrarán <n2>
+     valores de la sucesión <y(n1+1)>,..., <y(n1+n2+1)>, obtenidos
+     después de dejarla evolucionar durante <n1> iteraciones iniciales.
+
+     *Ejemplo*.  Diagrama de órbitas para el mapa cuadrático
+
+          (%i1) orbits(x^2+a, 0, 50, 200, [a, -2, 0.25], [style, dots]);
+
+     Para ampliar la región alrededor de la bifurcación en la parte de
+     abajo, cerca de x '=' -1.25, se usa el comando:
+          (%i2) orbits(x^2+a, 0, 100, 400, [a,-1,-1.53], [x,-1.6,-0.8],
+                       [nticks, 400], [style,dots]);
+
+ -- Función: staircase (<F>, <y0>, <n>,<opciones>,...);
+
+     Dibuja un diagrama de escalera (o diagrama de red) para la sucesión
+     definida por la ecuación de recurrencia
+                  y(n+1) = F(y(n))
+
+     La interpretación y valores permitidos de los parámetros de entrada
+     es la misma que para la función 'evolution'.  Un diagrama de
+     escalera consiste en una gráfica de la función <F(y)>, junto con la
+     recta <G(y)> '=' <y>.  Se comienza por dibujar un segmento vertical
+     desde el punto (<y0>, <y0>) en la recta, hasta el punto de
+     intersección con la función <F>.  En seguida, desde ese punto se
+     dibuja un segmento horizontal hasta el punto de intersección con la
+     recta, (<y1>, <y1>); el procedimiento se repite <n> veces hasta
+     alcanzar el punto (<yn>, <yn>).  Esta función acepta las mismas
+     opciones que 'plot2d'.
+
+     *Ejemplo*.
+
+          (%i1) staircase(cos(y), 1, 11, [y, 0, 1.2]);
 

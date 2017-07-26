@@ -348,7 +348,7 @@ win64_installer = @win64_installer@
 #       $Id: $
 #
 AUTOMAKE_OPTIONS = no-dependencies
-CC = gcc # to supress automake warning
+CC = gcc # to suppress automake warning
 verpkglibdir = $(pkglibdir)/@VERSION@
 verpkglibexecdir = $(libexecdir)/@PACKAGE@/@VERSION@
 verpkgdatadir = $(pkgdatadir)/@VERSION@

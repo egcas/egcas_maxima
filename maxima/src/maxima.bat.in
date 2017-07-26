@@ -1,12 +1,18 @@
 @echo off
 
 rem begin localisation of Environment Variables
-setlocal
+setlocal enableextensions
 
 
 rem Uncomment the line below and set required value to MAXIMA_LANG_SUBDIR
 rem to get localized describe in command line Maxima
 rem set MAXIMA_LANG_SUBDIR=es
+
+rem The variable LANGUAGE is usually not set on Windows, but if Maxima is running in
+rem Wine/Linux (e.g. for testing purposes) it is inherited from the Linux environment
+rem and causes troubles (at least with Clisp, maybe other Lisps too),
+rem so unset this variable.
+set LANGUAGE=
 
 set lisp=@DEFAULTLISP@
 set lisp_options=
@@ -17,8 +23,11 @@ set package=@PACKAGE@
 set verbose=false
 set path=%maxima_prefix%\gnuplot;%maxima_prefix%\gnuplot\bin;%maxima_prefix%\bin;%path%
 
-if "%MAXIMA_USERDIR%" == "" set MAXIMA_USERDIR=%USERPROFILE%\maxima
-if "%MAXIMA_TEMPDIR%" == "" set MAXIMA_TEMPDIR=%TEMP%
+if not defined MAXIMA_USERDIR set MAXIMA_USERDIR=%USERPROFILE%\maxima
+if not defined MAXIMA_TEMPDIR set MAXIMA_TEMPDIR=%TEMP%
+rem there were reports, that the tempdir could not be found (maybe because of special characters, ut8-chars, ...)
+rem so set a fallback (as it was before)
+if not exist "%MAXIMA_TEMPDIR%"\ set MAXIMA_TEMPDIR=%USERPROFILE%
 
 rem read maximarc and set the lisp type, if the user did specify MAXIMA_LISP
 rem currently no comments or other (Unix shell) commands are understood

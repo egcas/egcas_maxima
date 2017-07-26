@@ -44,18 +44,39 @@ it should be sufficient to just increase the version number and MD5-checksum
 for the new release in CMakeLists.txt.
 
 
+Building a 64 bit installer
+===========================
+
+By default a 32 bit installer (which works on 32 and 64 bit Windows) will be
+generated. If you want to crosscompile a 64 bit installer, install the 64 bit
+crosscompiler package (g++-mingw-w64-x86-64) and a recent 64 bit 'wine'.
+(see https://www.winehq.org/download how to get a development version
+for your Linux distribution). For the 64bit crosscompiliation procedure wine64
+will be searched in /opt/wine-devel - where the packages from the wine team
+will install their packages.
+
+Then use the following commands to build a 64 bit installer:
+cmake -DBUILD_64BIT=YES ..
+make
+make package
+
+
 Installing the package
 ======================
 
 Of course just by double-clicking/executing the generated EXE on
-Windows. This Maxima installer installs into C:\maxima-VERSION, you
-can not change this directory.
+Windows. This Maxima installer installs into C:\maxima-VERSION,
+changing this directory is not recommended (because special characters
+or foreign language characters might cause problems).
 
 If you want to do an *unattended* installation (e.g. if you plan to
 install Maxima on many computers in a school, university or company),
 this installer (and uninstaller) understands the command line switch
 "/S" (for 'silent install').
 
+To select a installation directory for a unattended installation, use
+"/D=directory", e.g. to install to C:\maxima the command would be:
+maxima-clisp-sbcl-VERSION-win32.exe /S /D=C:\maxima
 
 Testing the installed package:
 ==============================
