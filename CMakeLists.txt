@@ -20,6 +20,7 @@ ExternalProject_Add(egcas_maxima
                       --libexecdir=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/usr/bin/egcas/
                       --libdir=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/usr/lib/egcas/
                       --bindir=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/usr/bin/
+                      --enable-sbcl
     PREFIX ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
