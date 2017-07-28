@@ -13,6 +13,7 @@ endif()
 
 
 ExternalProject_Add(egcas_maxima
+    PATCH_COMMAND touch ${CMAKE_CURRENT_SOURCE_DIR}/maxima/configure.ac ${CMAKE_CURRENT_SOURCE_DIR}/maxima/aclocal.m4 ${CMAKE_CURRENT_SOURCE_DIR}/maxima/configure ${CMAKE_CURRENT_SOURCE_DIR}/maxima/Makefile.am ${CMAKE_CURRENT_SOURCE_DIR}/maxima/Makefile.in
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/maxima
     CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/maxima/configure
                       --datarootdir=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/usr/share/egcas/
@@ -23,7 +24,15 @@ ExternalProject_Add(egcas_maxima
                       --enable-sbcl
     PREFIX ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}
     BUILD_COMMAND make
+#    COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type f -exec sed -i s=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/=/=g {} +
+#    COMMAND find ${CMAKE_CURRENT_SOURCE_DIR} -type f -exec sed -i s=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}=/=g {} +
     BUILD_IN_SOURCE 1
+)
+
+ExternalProject_Add_Step(egcas_maxima after_install
+    COMMAND find ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH} -type f -exec sed -i s=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/=${CMAKE_BINARY_DIR}/_${MAXIMA_INST_PATH}/=g {} +
+    COMMAND find ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH} -type f -exec sed -i s=${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}=${CMAKE_BINARY_DIR}/_${MAXIMA_INST_PATH}=g {} +
+    DEPENDEES install
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
