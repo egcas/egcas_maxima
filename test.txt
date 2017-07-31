@@ -1,0 +1,5 @@
+sed -i bak -e s/STRING_TO_REPLACE/REPLACE_WITH/g index.html
+
+sed -i 's#/path/to/AAA#/path/to/BBB#g' your_file
+
+find . -type f -exec sed -i 's/foo/bar/g' {} +
