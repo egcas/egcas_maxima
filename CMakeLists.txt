@@ -26,7 +26,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
         set(MAXIMA_INSTALL_DIR /usr/bin/egcas-maxima)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        add_subdirectory(maxima/crosscompile-windows)
+        add_custom_target(egcas_maxima COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/win_crosscompile.sh ${CMAKE_SOURCE_DIR}/build_mxe/mxe/usr/bin/i686-w64-mingw32.shared-cmake WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMMENT "cross compile maxima for windows" VERBATIM)
+        
         set(MAXIMA_INSTALL_DIR egcas-maxima)
 endif()
 
