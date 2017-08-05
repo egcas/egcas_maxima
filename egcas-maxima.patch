@@ -1,0 +1,24 @@
+diff -Naur maxima1/crosscompile-windows/CMakeLists.txt maxima2/crosscompile-windows/CMakeLists.txt
+--- maxima1/crosscompile-windows/CMakeLists.txt	2017-08-05 07:13:37.724007759 +0200
++++ maxima2/crosscompile-windows/CMakeLists.txt	2017-08-05 07:05:26.000000000 +0200
+@@ -155,17 +155,13 @@
+ externalproject_add(maxima
+   # first copy the maxima source to a build directory, since out-of-source-builds do not work
+   DOWNLOAD_COMMAND rsync -a --exclude=crosscompile-windows/build/ "${CMAKE_SOURCE_DIR}/../"  "${CMAKE_BINARY_DIR}/maxima-prefix/src/maxima"
+-  DEPENDS clisp sbcl tcl tk
++  DEPENDS sbcl tcl tk
+   BUILD_IN_SOURCE 1
+   PATCH_COMMAND sh -c "test \"${BUILD_64BIT}\" != \"OFF\" && patch --binary -p1 < ${CMAKE_SOURCE_DIR}/maxima.bat.in-patch || exit 0"
+   CONFIGURE_COMMAND sh -c "test -x ./bootstrap && ./bootstrap || return 0"
+-            COMMAND ./configure --host=${HOST} --enable-clisp --with-clisp=${CMAKE_BINARY_DIR}/wine-clisp.sh --with-clisp-runtime=${CMAKE_BINARY_DIR}/wine-lisp.sh --enable-sbcl --with-sbcl=${CMAKE_BINARY_DIR}/wine-sbcl.sh --prefix=C:/maxima-${MAXIMAVERSION}
+-  # clisp-depends.mk is generated with "\" as path seperator, not "/" - correct that...
+-  BUILD_COMMAND LANG=C $(MAKE) -C src clisp-depends.mk
+-        COMMAND sed -i s+\\\\+/+g src/clisp-depends.mk
++            COMMAND ./configure --host=${HOST} --enable-sbcl --with-sbcl=${CMAKE_BINARY_DIR}/wine-sbcl.sh --prefix=C:/maxima_installation
+         COMMAND LANG=C $(MAKE)
+-        COMMAND LANG=C $(MAKE) pdf
+-  INSTALL_COMMAND LANG=C $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/maxima-installroot/
++  INSTALL_COMMAND LANG=C $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/
+ )
+ 
+ # crosscompiling winkill with autoconf does not work, compile it using CMake.
