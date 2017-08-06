@@ -26,15 +26,27 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
         set(MAXIMA_INSTALL_DIR /usr/bin/egcas-maxima)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        add_custom_target(egcas_maxima COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/win_crosscompile.sh ${CMAKE_SOURCE_DIR}/build_mxe/mxe/usr/bin/i686-w64-mingw32.shared-cmake WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMMENT "cross compile maxima for windows" VERBATIM)
+        add_custom_target(egcas_maxima 
+                                    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/win_crosscompile.sh -C ${CMAKE_SOURCE_DIR}/build_mxe/mxe/usr/bin/i686-w64-mingw32.shared-cmake -i ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}
+                                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
+                                    COMMENT "cross compile maxima for windows" 
+                                    VERBATIM)
         
         set(MAXIMA_INSTALL_DIR egcas-maxima)
 endif()
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/bin/maxima DESTINATION ${MAXIMA_INSTALL_DIR}/bin)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        install(PROGRAMS ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/bin/maxima DESTINATION ${MAXIMA_INSTALL_DIR}/bin)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        install(PROGRAMS ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/bin/maxima.bat DESTINATION ${MAXIMA_INSTALL_DIR}/bin)
+        install(FILES ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/bin/maxima-command.ico DESTINATION ${MAXIMA_INSTALL_DIR}/bin)
+        install(FILES ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/bin/set_lang.vbs DESTINATION ${MAXIMA_INSTALL_DIR}/bin)
+endif()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/lib/ DESTINATION ${MAXIMA_INSTALL_DIR}/lib/)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/libexec/ DESTINATION ${MAXIMA_INSTALL_DIR}/libexec/)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/share/ DESTINATION ${MAXIMA_INSTALL_DIR}/share/)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/src/ DESTINATION ${MAXIMA_INSTALL_DIR}/src/)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/tmp/ DESTINATION ${MAXIMA_INSTALL_DIR}/tmp/)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/src/ DESTINATION ${MAXIMA_INSTALL_DIR}/src/)
+        install(DIRECTORY ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/tmp/ DESTINATION ${MAXIMA_INSTALL_DIR}/tmp/)
+endif()
 
