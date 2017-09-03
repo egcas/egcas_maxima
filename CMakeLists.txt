@@ -30,7 +30,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         set(MAXIMA_INSTALL_DIR /usr/bin/egcas-maxima)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}/bin/maxima.bat
-                                    COMMAND ${MAXIMA_BUILD_DIRECTORY}/win_crosscompile.sh -C ${CMAKE_SOURCE_DIR}/build_mxe/mxe/usr/bin/i686-w64-mingw32.shared-cmake -i ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}
+                                    COMMAND ${MAXIMA_BUILD_DIRECTORY}/win_crosscompile.sh -C ${CMAKE_SOURCE_DIR}/build/build_mxe/mxe/usr/bin/i686-w64-mingw32.shared-cmake -i ${CMAKE_BINARY_DIR}/${MAXIMA_INST_PATH}
                                     WORKING_DIRECTORY ${MAXIMA_BUILD_DIRECTORY}
                                     COMMENT "cross compile maxima for windows"
                                     VERBATIM)
