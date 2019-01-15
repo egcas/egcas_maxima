@@ -47,6 +47,7 @@ elseif(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
                   BUILD_COMMAND ""
                   INSTALL_COMMAND ""
                 )
+        set(MAXIMA_INSTALL_DIR egcas-maxima)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
