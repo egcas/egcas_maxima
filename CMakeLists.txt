@@ -41,7 +41,7 @@ if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
         endif()
 elseif(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
         ExternalProject_Add(egcas_maxima
-                  URL "${CMAKE_CURRENT_SOURCE_DIR}/prebuilt/win/maxima_win_exec.zip"
+                  URL "https://github.com/egcas/egcas_maxima/releases/download/0.0.3/maxima-bin-win-0_0_3-1.zip"
                   SOURCE_DIR ${CMAKE_BINARY_DIR}/maxima_installation
                   CONFIGURE_COMMAND ""
                   BUILD_COMMAND ""
